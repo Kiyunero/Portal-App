@@ -1,0 +1,408 @@
+/* --- 全体の基本設定 --- */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #2e2e2e;
+    color: #f0f0f0;
+    line-height: 1.6;
+}
+
+/* --- ヘッダーとフッターのスタイル --- */
+.site-header, .section-header-alt, .site-footer {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+    text-align: center;
+    padding: 1rem 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    margin-bottom: 2rem;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.site-header h1, .section-header-alt h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #f0f0f0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.main-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.main-nav li {
+    margin-left: 1.5rem;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: #f0f0f0;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.main-nav a:hover {
+    color: #007bff;
+}
+
+.site-footer {
+    margin-top: 2rem;
+    padding: 1rem 0;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+
+/* --- メインコンテンツエリアのスタイル --- */
+main {
+    padding: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* --- 各セクションのカードスタイル --- */
+.section-card {
+    background-color: #1a1a1a;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+/* --- スライドバナーのスタイル --- */
+#banner-container {
+    padding: 0;
+}
+
+.banner-swiper {
+    width: 100%;
+    padding: 0 2rem;
+    box-sizing: border-box;
+}
+
+.swiper-slide {
+    text-align: center;
+    background: #2e2e2e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    height: auto;
+}
+
+.swiper-slide a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.swiper-slide a:hover img {
+    transform: scale(1.05);
+}
+
+.slide-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+.slide-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+.slide-button {
+    background-color: #ffffff99;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.7rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    pointer-events: auto;
+}
+
+.slide-button:hover {
+    background-color: #0056b3;
+}
+
+.swiper-pagination {
+    position: relative;
+    top: 1.5rem;
+    text-align: center;
+}
+
+.swiper-pagination-bullet {
+    background-color: #555;
+    opacity: 1;
+    margin: 0 6px;
+    width: 10px;
+    height: 10px;
+    transition: background-color 0.3s;
+}
+
+.swiper-pagination-bullet-active {
+    background-color: #007bff;
+}
+
+/* --- アプリ一覧グリッドのスタイル --- */
+#app-grid-container {
+    padding-top: 1rem;
+}
+
+.app-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+    padding-top: 1rem;
+}
+
+.app-item {
+    /* display: flex;  アイコンを背景にするためflexboxを解除 */
+    /* flex-direction: column; */
+    /* align-items: center; */
+    text-decoration: none;
+    color: #f0f0f0;
+    background-color: #2e2e2e;
+    /* padding: 1.2rem 1rem;  paddingは個別に設定 */
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    /* ▼▼▼ ここから修正・追記 ▼▼▼ */
+    position: relative; /* 子要素（アイコンとタイトル）の配置基準 */
+    overflow: hidden;   /* アイコンがはみ出さないように */
+    aspect-ratio: 1 / 1; /* 正方形にする */
+    display: flex; /* タイトルを中央に配置するためflexboxを再設定 */
+    flex-direction: column;
+    justify-content: flex-end; /* タイトルを下部に配置 */
+    padding-bottom: 1rem; /* タイトル下部の余白 */
+    /* ▲▲▲ ここまで修正・追記 ▲▲▲ */
+}
+
+.app-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+.app-icon {
+    /* ▼▼▼ ここから修正・追記 ▼▼▼ */
+    position: absolute; /* 親要素（.app-item）を基準に配置 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* カード全体を覆うように拡大・トリミング */
+    border-radius: 12px; /* 親要素の角丸に合わせる */
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  背景なので影は不要 */
+    /* margin-bottom: 0.8rem; 背景なのでマージンは不要 */
+    filter: brightness(0.9); /* アイコン画像を少し暗くして文字を見やすくする */
+    transition: filter 0.3s ease;
+    /* ▲▲▲ ここまで修正・追記 ▲▲▲ */
+}
+
+.app-item:hover .app-icon {
+    filter: brightness(0.8); /* ホバーで少し明るくする */
+}
+
+
+.app-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    
+    /* ▼▼▼ ここから修正・追記 ▼▼▼ */
+    position: relative; /* アイコンの上に表示されるようにする */
+    z-index: 1;         /* アイコンより前面に表示 */
+    padding: 0 0.5rem; /* 左右に少し余白 */
+    text-shadow: 0 0 5px rgba(0,0,0,0.8); /* 文字の視認性を高める影 */
+    /* ▲▲▲ ここまで修正・追記 ▲▲▲ */
+}
+
+/* --- ページビューワーのスタイル（アニメーション対応） --- */
+#main-contents, #page-viewer {
+    transition: opacity 0.4s ease-in-out;
+}
+
+.hidden {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+}
+
+#page-viewer {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    color: #f0f0f0;
+    opacity: 1;
+    position: relative;
+    z-index: 10;
+}
+#page-viewer.hidden {
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+
+
+#back-button {
+    background-color: #ffffff2d;
+    color: rgba(255, 255, 255, 0.856);
+    border: none;
+    padding: 0.7rem 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: normal;
+    font-size: 0.8rem;
+    margin-bottom: 2rem;
+    transition: background-color 0.3s ease;
+}
+
+#back-button:hover {
+    background-color: #0057b39d;
+}
+
+#page-content h1, #page-content h2, #page-content h3 {
+    border-bottom: 2px solid #555;
+    padding-bottom: 0.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+#page-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1rem 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#page-content a {
+    color: #00aaff;
+    text-decoration: none;
+}
+#page-content a:hover {
+    text-decoration: underline;
+}
+
+#page-content code {
+    background-color: #2e2e2e;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+}
+
+#page-content hr {
+    border: 0;
+    border-top: 1px solid #555;
+    margin: 2rem 0;
+}
+
+/* --- レスポンシブ対応 --- */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+    }
+    .main-nav ul {
+        margin-top: 1rem;
+    }
+    .main-nav li {
+        margin: 0 0.5rem;
+    }
+    .banner-swiper {
+        padding: 0 1rem;
+    }
+    .swiper-slide {
+        aspect-ratio: 16 / 9;
+    }
+    .app-grid-layout {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+    .app-icon {
+        /* レスポンシブ時もカードいっぱいに表示 */
+        width: 100%;
+        height: 100%;
+    }
+    .app-item {
+        padding: 0; /* アイコンが背景なのでpaddingを0に */
+        padding-bottom: 0.8rem; /* タイトル下部の余白は維持 */
+    }
+    .site-header h1, .section-header-alt h1 {
+        font-size: 1.2rem;
+    }
+    .logo img {
+        height: 30px;
+    }
+    #page-viewer {
+        padding: 1rem;
+    }
+    .app-title {
+        font-size: 0.85rem; /* スマホではタイトルを少し小さく */
+    }
+}
+
+#page-content video {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
