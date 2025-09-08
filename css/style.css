@@ -95,7 +95,7 @@ main {
 
 /* --- スライドバナーのスタイル --- */
 #banner-container {
-    padding: 0;
+    padding: 0.2rem;
 }
 
 .banner-swiper {
@@ -115,6 +115,7 @@ main {
     overflow: hidden;
     aspect-ratio: 1 / 1;
     height: auto;
+    transform: translateZ(0); /* アニメーションの描画不具合を解消するおまじない */
 }
 
 .swiper-slide a {

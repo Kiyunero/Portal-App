@@ -188,6 +188,7 @@ function initializeSwiper() {
     new Swiper('.banner-swiper', {
         loop: true,
         autoplay: { delay: 3000, disableOnInteraction: false },
+        centeredSlides: true, // アクティブなスライドを中央に配置
         slidesPerView: 3,
         spaceBetween: 20,
         breakpoints: {
