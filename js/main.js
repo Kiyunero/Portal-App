@@ -67,9 +67,6 @@ const appContainer = document.getElementById('app-container');
 const appFrame = document.getElementById('app-frame');
 const closeAppButton = document.getElementById('close-app-button');
 
-// --- 動画の音量制御用変数 ---
-let volumeInterval = null;
-
 // =============================================
 // 外部アプリの起動・終了処理
 // =============================================
@@ -83,7 +80,7 @@ function launchApp(url) {
 function closeApp() {
     appContainer.classList.add('hidden');
     mainContents.classList.remove('hidden');
-    appFrame.src = ""; 
+    appFrame.src = "";
 }
 
 // =============================================
@@ -99,21 +96,13 @@ async function showPage(pagePath) {
 
         pageContent.innerHTML = marked.parse(markdown);
 
+        // ▼▼▼ ビデオ処理を簡略化 ▼▼▼
         const video = pageContent.querySelector('video');
         if (video) {
-            if (volumeInterval) clearInterval(volumeInterval);
-            
-            video.volume = 0;
+            video.volume = 0.5; // 音量を50%に設定（または1.0でもOK）
             video.play().catch(e => console.log("Autoplay was prevented."));
-
-            volumeInterval = setInterval(() => {
-                if (video.volume < 1.0) {
-                    video.volume = Math.min(1.0, video.volume + 0.1);
-                } else {
-                    clearInterval(volumeInterval);
-                }
-            }, 100);
         }
+        // ▲▲▲ 音声フェードイン処理を削除 ▲▲▲
 
         mainContents.classList.add('hidden');
         pageViewer.classList.remove('hidden');
@@ -168,7 +157,7 @@ function generateBanners() {
 function generateAppGrid() {
     appDatabase.forEach(app => {
         const link = document.createElement('a');
-        link.href = "#"; 
+        link.href = "#";
         link.className = 'app-item';
 
         link.addEventListener('click', (event) => {
@@ -220,26 +209,20 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSwiper();
 
     closeAppButton.addEventListener('click', closeApp);
-    
+
+    // ▼▼▼ BACK TO HOMEボタンの処理を簡略化 ▼▼▼
     backButton.addEventListener('click', () => {
+        // ページビューワー内のビデオを探す
         const video = pageContent.querySelector('video');
         
+        // もしビデオがあれば、再生を停止する
         if (video) {
-            if (volumeInterval) clearInterval(volumeInterval);
-
-            volumeInterval = setInterval(() => {
-                if (video.volume > 0.0) {
-                    video.volume = Math.max(0.0, video.volume - 0.1);
-                } else {
-                    clearInterval(volumeInterval);
-                    video.pause();
-                    video.currentTime = 0;
-                    
-                    showMainContents();
-                }
-            }, 50);
-        } else {
-            showMainContents();
+            video.pause();
+            video.currentTime = 0;
         }
+        
+        // メインコンテンツを表示する（ビデオの有無に関わらず共通の処理）
+        showMainContents();
     });
+    // ▲▲▲ ここまで修正 ▲▲▲
 });
