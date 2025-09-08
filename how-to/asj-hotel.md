@@ -7,7 +7,7 @@
 
 このアプリは「沿線まるごとホテル」を最大限楽しむために必要不可欠です。
 
-<video src="https://firebasestorage.googleapis.com/v0/b/pilgrimage-quest-app.firebasestorage.app/o/%E5%A5%A5%E5%A4%9A%E6%91%A9_%E6%A8%AA%E7%94%BB%E9%9D%A2.mp4?alt=media&token=9cf70644-9f17-485e-a29b-03302329fb24" width="70%" controls playsinline autoplay loop></video>
+<video src="https://firebasestorage.googleapis.com/v0/b/pilgrimage-quest-app.firebasestorage.app/o/%E5%A5%A5%E5%A4%9A%E6%91%A9_%E6%A8%AA%E7%94%BB%E9%9D%A2.mp4?alt=media&token=9cf70644-9f17-485e-a29b-03302329fb24" width="100%" controls playsinline autoplay loop></video>
 
 ---
 

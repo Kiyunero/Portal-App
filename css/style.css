@@ -261,18 +261,14 @@ main {
     text-shadow: 0 0 5px rgba(0,0,0,0.8);
 }
 
-/* --- ページビューワーのスタイル（アニメーション対応） --- */
-#main-contents, #page-viewer {
-    transition: opacity 0.4s ease-in-out;
-}
+/* --- ▼▼▼ ページビューワーのスタイルを修正 ▼▼▼ --- */
 
+/* 汎用の非表示クラスを display: none; に変更 */
 .hidden {
-    opacity: 0;
-    pointer-events: none;
-    position: absolute;
-    width: 100%;
+    display: none;
 }
 
+/* アニメーション関連のスタイルを削除し、レイアウトをシンプルに保つ */
 #page-viewer {
     max-width: 900px;
     margin: 0 auto;
@@ -281,15 +277,10 @@ main {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     color: #f0f0f0;
-    opacity: 1;
-    position: relative;
-    z-index: 10;
+    position: relative; 
 }
-#page-viewer.hidden {
-    opacity: 0;
-    pointer-events: none;
-    z-index: -1;
-}
+
+/* ▲▲▲ ここまで修正 ▲▲▲ */
 
 
 #back-button {
@@ -344,7 +335,9 @@ main {
     margin: 2rem 0;
 }
 
-/* --- ▼▼▼ 外部アプリ(iframe)表示用のスタイルを新規追加 ▼▼▼ --- */
+/* --- ▼▼▼ 外部アプリ(iframe)表示用のスタイルを修正 ▼▼▼ --- */
+
+/* アニメーション関連のスタイルを削除 */
 #app-container {
     position: fixed;
     top: 0;
@@ -353,15 +346,9 @@ main {
     height: 100%;
     background-color: #1a1a1a;
     z-index: 1000;
-    opacity: 1;
-    transition: opacity 0.4s ease-in-out;
 }
 
-#app-container.hidden {
-    opacity: 0;
-    pointer-events: none;
-    z-index: -1;
-}
+/* ▲▲▲ ここまで修正 ▲▲▲ */
 
 #close-app-button {
     position: absolute;
@@ -391,7 +378,6 @@ main {
     height: 100%;
     border: none;
 }
-/* ▲▲▲ ここまで追加 ▲▲▲ */
 
 
 /* --- レスポンシブ対応 --- */
