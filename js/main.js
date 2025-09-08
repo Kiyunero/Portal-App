@@ -3,11 +3,11 @@
 // =============================================
 const appDatabase = [
     {
-        id: 'asj-hotel', // アプリを内部的に識別するための一意のID、英数字とハイフン(-)で命名すれば何でも良い(今は私用されていない、今後お気に入りなどを実装した時に必要)
+        id: 'asj-hotel',
         title: '【奥多摩】ASJ×沿線まるごとホテル',
-        icon: 'images/app_icon_ASJ.png', // アプリ一覧に表示されるアイコン画像のパス
-        url: 'https://kiyunero.github.io/-2/', // ここを実際のアプリのURLに書き換える
-        showOnBanner: true, // このアプリを画面上部のスライドバナーに表示するかどうかを決める
+        icon: 'images/app_icon_ASJ.png',
+        url: 'https://kiyunero.github.io/-2/',
+        showOnBanner: true,
         bannerImage: 'images/banner_ASJ.png',
         bannerButtonText: 'MORE',
         howToPage: 'how-to/asj-hotel.md'
@@ -63,9 +63,28 @@ const mainContents = document.getElementById('main-contents');
 const pageViewer = document.getElementById('page-viewer');
 const pageContent = document.getElementById('page-content');
 const backButton = document.getElementById('back-button');
+const appContainer = document.getElementById('app-container');
+const appFrame = document.getElementById('app-frame');
+const closeAppButton = document.getElementById('close-app-button');
 
-// --- ▼▼▼ 動画の音量制御用変数を追加 ▼▼▼ ---
-let volumeInterval = null; // 音量フェード処理を管理するための変数
+// --- 動画の音量制御用変数 ---
+let volumeInterval = null;
+
+// =============================================
+// 外部アプリの起動・終了処理
+// =============================================
+function launchApp(url) {
+    appFrame.src = url;
+    mainContents.classList.add('hidden');
+    pageViewer.classList.add('hidden');
+    appContainer.classList.remove('hidden');
+}
+
+function closeApp() {
+    appContainer.classList.add('hidden');
+    mainContents.classList.remove('hidden');
+    appFrame.src = ""; 
+}
 
 // =============================================
 // ページ表示・非表示の制御
@@ -80,26 +99,21 @@ async function showPage(pagePath) {
 
         pageContent.innerHTML = marked.parse(markdown);
 
-        // --- ▼▼▼ 動画の音量フェードイン処理を追加 ▼▼▼ ---
         const video = pageContent.querySelector('video');
         if (video) {
-            // 前のインターバルが残っていればクリアする
             if (volumeInterval) clearInterval(volumeInterval);
             
-            video.volume = 0; // まず音量を0にする
-            video.play().catch(e => console.log("Autoplay was prevented.")); // 再生開始
+            video.volume = 0;
+            video.play().catch(e => console.log("Autoplay was prevented."));
 
             volumeInterval = setInterval(() => {
-                // 少しずつ音量を上げる
                 if (video.volume < 1.0) {
                     video.volume = Math.min(1.0, video.volume + 0.1);
                 } else {
-                    // 音量が最大になったら処理を停止
                     clearInterval(volumeInterval);
                 }
-            }, 100); // 100ミリ秒ごとに実行
+            }, 100);
         }
-        // --- ▲▲▲ ここまで追加 ▲▲▲ ---
 
         mainContents.classList.add('hidden');
         pageViewer.classList.remove('hidden');
@@ -114,6 +128,7 @@ async function showPage(pagePath) {
 
 function showMainContents() {
     pageViewer.classList.add('hidden');
+    appContainer.classList.add('hidden');
     mainContents.classList.remove('hidden');
 }
 
@@ -153,8 +168,13 @@ function generateBanners() {
 function generateAppGrid() {
     appDatabase.forEach(app => {
         const link = document.createElement('a');
-        link.href = app.url;
+        link.href = "#"; 
         link.className = 'app-item';
+
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            launchApp(app.url);
+        });
 
         const icon = document.createElement('img');
         icon.src = app.icon;
@@ -199,30 +219,26 @@ document.addEventListener('DOMContentLoaded', () => {
     generateAppGrid();
     initializeSwiper();
 
-    // --- ▼▼▼ 戻るボタンの処理を修正 ▼▼▼ ---
+    closeAppButton.addEventListener('click', closeApp);
+    
     backButton.addEventListener('click', () => {
         const video = pageContent.querySelector('video');
         
-        // もし動画が存在すれば、音量をフェードアウトさせてからページを切り替える
         if (video) {
-            // 前のインターバルが残っていればクリアする
             if (volumeInterval) clearInterval(volumeInterval);
 
             volumeInterval = setInterval(() => {
                 if (video.volume > 0.0) {
                     video.volume = Math.max(0.0, video.volume - 0.1);
                 } else {
-                    // 音量が0になったら、インターバルを停止し、動画も停止
                     clearInterval(volumeInterval);
                     video.pause();
-                    video.currentTime = 0; // 動画を最初に戻す
+                    video.currentTime = 0;
                     
-                    // 最後にメインコンテンツを表示
                     showMainContents();
                 }
-            }, 50); // 50ミリ秒ごと（フェードインより少し速く）
+            }, 50);
         } else {
-            // 動画がなければ、すぐにメインコンテンツを表示
             showMainContents();
         }
     });

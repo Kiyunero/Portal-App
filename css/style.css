@@ -210,26 +210,19 @@ main {
 }
 
 .app-item {
-    /* display: flex;  アイコンを背景にするためflexboxを解除 */
-    /* flex-direction: column; */
-    /* align-items: center; */
     text-decoration: none;
     color: #f0f0f0;
     background-color: #2e2e2e;
-    /* padding: 1.2rem 1rem;  paddingは個別に設定 */
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    
-    /* ▼▼▼ ここから修正・追記 ▼▼▼ */
-    position: relative; /* 子要素（アイコンとタイトル）の配置基準 */
-    overflow: hidden;   /* アイコンがはみ出さないように */
-    aspect-ratio: 1 / 1; /* 正方形にする */
-    display: flex; /* タイトルを中央に配置するためflexboxを再設定 */
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* タイトルを下部に配置 */
-    padding-bottom: 1rem; /* タイトル下部の余白 */
-    /* ▲▲▲ ここまで修正・追記 ▲▲▲ */
+    justify-content: flex-end;
+    padding-bottom: 1rem;
 }
 
 .app-item:hover {
@@ -238,23 +231,19 @@ main {
 }
 
 .app-icon {
-    /* ▼▼▼ ここから修正・追記 ▼▼▼ */
-    position: absolute; /* 親要素（.app-item）を基準に配置 */
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover; /* カード全体を覆うように拡大・トリミング */
-    border-radius: 12px; /* 親要素の角丸に合わせる */
-    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  背景なので影は不要 */
-    /* margin-bottom: 0.8rem; 背景なのでマージンは不要 */
-    filter: brightness(0.9); /* アイコン画像を少し暗くして文字を見やすくする */
+    object-fit: cover;
+    border-radius: 12px;
+    filter: brightness(0.9);
     transition: filter 0.3s ease;
-    /* ▲▲▲ ここまで修正・追記 ▲▲▲ */
 }
 
 .app-item:hover .app-icon {
-    filter: brightness(0.8); /* ホバーで少し明るくする */
+    filter: brightness(0.8);
 }
 
 
@@ -266,13 +255,10 @@ main {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-    
-    /* ▼▼▼ ここから修正・追記 ▼▼▼ */
-    position: relative; /* アイコンの上に表示されるようにする */
-    z-index: 1;         /* アイコンより前面に表示 */
-    padding: 0 0.5rem; /* 左右に少し余白 */
-    text-shadow: 0 0 5px rgba(0,0,0,0.8); /* 文字の視認性を高める影 */
-    /* ▲▲▲ ここまで修正・追記 ▲▲▲ */
+    position: relative;
+    z-index: 1;
+    padding: 0 0.5rem;
+    text-shadow: 0 0 5px rgba(0,0,0,0.8);
 }
 
 /* --- ページビューワーのスタイル（アニメーション対応） --- */
@@ -358,6 +344,56 @@ main {
     margin: 2rem 0;
 }
 
+/* --- ▼▼▼ 外部アプリ(iframe)表示用のスタイルを新規追加 ▼▼▼ --- */
+#app-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a1a;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out;
+}
+
+#app-container.hidden {
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+
+#close-app-button {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    font-size: 24px;
+    line-height: 40px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 1001;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+#close-app-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: rotate(90deg);
+}
+
+#app-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+/* ▲▲▲ ここまで追加 ▲▲▲ */
+
+
 /* --- レスポンシブ対応 --- */
 @media (max-width: 768px) {
     .header-content {
@@ -379,13 +415,12 @@ main {
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     }
     .app-icon {
-        /* レスポンシブ時もカードいっぱいに表示 */
         width: 100%;
         height: 100%;
     }
     .app-item {
-        padding: 0; /* アイコンが背景なのでpaddingを0に */
-        padding-bottom: 0.8rem; /* タイトル下部の余白は維持 */
+        padding: 0;
+        padding-bottom: 0.8rem;
     }
     .site-header h1, .section-header-alt h1 {
         font-size: 1.2rem;
@@ -397,7 +432,7 @@ main {
         padding: 1rem;
     }
     .app-title {
-        font-size: 0.85rem; /* スマホではタイトルを少し小さく */
+        font-size: 0.85rem;
     }
 }
 
