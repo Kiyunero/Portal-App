@@ -1,404 +1,630 @@
+/* ============================================= */
 /* --- 全体の基本設定 --- */
+/* ============================================= */
+
 body {
+    /* フォントの種類を指定します。左側から優先的に適用され、PCやスマホに標準で入っている見やすいフォントを設定しています。 */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* ページの余白をなくします。 */
     margin: 0;
     padding: 0;
+    /* ページ全体の背景色です。ダークグレー(#2e2e2e)に設定しています。 */
     background-color: #2e2e2e;
+    /* ページ全体の文字色です。白に近い明るいグレー(#f0f0f0)に設定しています。 */
     color: #f0f0f0;
+    /* 行の高さを設定します。1.6にすることで、文字が詰まりすぎず読みやすくなります。 */
     line-height: 1.6;
 }
 
+/* ============================================= */
 /* --- ヘッダーとフッターのスタイル --- */
+/* ============================================= */
+
 .site-header, .section-header-alt, .site-footer {
+    /* 背景色を、bodyより少し濃い黒に近いグレー(#1a1a1a)に設定しています。 */
     background-color: #1a1a1a;
+    /* 文字色を、bodyと同じ明るいグレー(#f0f0f0)に設定しています。 */
     color: #f0f0f0;
+    /* 中の要素（文字など）を中央揃えにします。 */
     text-align: center;
+    /* 上下の内側の余白を1rem（約16px）に設定します。 */
     padding: 1rem 0;
+    /* 下側に影をつけ、立体感を出します。rgba(0,0,0,0.4)は半透明の黒い影です。 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    /* 下側の外側の余白を2rem（約32px）空けます。 */
     margin-bottom: 2rem;
 }
 
 .header-content {
-    max-width: 1200px;
+    /* コンテンツの最大幅を1600pxに設定。これ以上画面が大きくても、コンテンツは中央に配置され間延びしません。 */
+    max-width: 1600px;
+    /* `max-width`とセットで使い、中央寄せを実現します。 */
     margin: 0 auto;
+    /* 左右の内側に2remの余白を設けます。 */
     padding: 0 2rem;
+    /* 中の要素を横並びにします（Flexboxレイアウト）。 */
     display: flex;
+    /* 横並びの要素を両端に配置します（ロゴを左、メニューを右）。 */
     justify-content: space-between;
+    /* 縦方向の中央揃えにします。 */
     align-items: center;
 }
 
 .logo {
+    /* 中の要素（画像と文字）を横並びにします。 */
     display: flex;
+    /* 縦方向の中央揃えにします。 */
     align-items: center;
 }
 
 .logo img {
+    /* ロゴの高さを40pxに設定します。値を大きくするとロゴが大きくなります。 */
     height: 40px;
+    /* ロゴの右側に10pxの余白を設けます。 */
     margin-right: 10px;
 }
 
 .site-header h1, .section-header-alt h1 {
+    /* 上下の余白をなくします。 */
     margin: 0;
-    font-size: 1.5rem;
+    /* 文字サイズを画面幅に応じて滑らかに変化させます。最小1.2rem、最大1.5rem、基本は画面幅の2.5%になります。 */
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+    /* 文字を太字にします。 */
     font-weight: bold;
+    /* 文字色を明るいグレーに設定。 */
     color: #f0f0f0;
+    /* 文字をすべて大文字にします。 */
     text-transform: uppercase;
+    /* 文字と文字の間隔を1px空けます。値を大きくすると間隔が広がります。 */
     letter-spacing: 1px;
 }
 
 .main-nav ul {
+    /* リストの黒い点を消します。 */
     list-style: none;
+    /* 余白をリセットします。 */
     margin: 0;
     padding: 0;
+    /* メニュー項目を横並びにします。 */
     display: flex;
 }
 
 .main-nav li {
+    /* 各メニュー項目の左側に1.5remの余白を設けます。 */
     margin-left: 1.5rem;
 }
 
 .main-nav a {
+    /* リンクの下線を消します。 */
     text-decoration: none;
+    /* 文字色を明るいグレーに設定。 */
     color: #f0f0f0;
+    /* 文字の太さを500（少し太め）に設定。 */
     font-weight: 500;
+    /* マウスを乗せたときの色変化を0.3秒かけて滑らかにします。 */
     transition: color 0.3s ease;
 }
 
 .main-nav a:hover {
+    /* マウスを乗せたとき、文字色を青(#007bff)に変更します。 */
     color: #007bff;
 }
 
 .site-footer {
+    /* 上側の外側の余白を2rem空けます。 */
     margin-top: 2rem;
+    /* 上下の内側の余白を1remに設定。 */
     padding: 1rem 0;
+    /* 文字サイズを少し小さくします。 */
     font-size: 0.9rem;
+    /* 文字色を少し暗いグレー(#aaa)にします。 */
     color: #aaa;
 }
 
 
+/* ============================================= */
 /* --- メインコンテンツエリアのスタイル --- */
+/* ============================================= */
+
 main {
-    padding: 0;
-    max-width: 1200px;
+    /* 左右に1remの余白を設けます。 */
+    padding: 0 1rem;
+    /* コンテンツの最大幅を1600pxに設定し、中央寄せにします。 */
+    max-width: 1600px;
     margin: 0 auto;
 }
 
-/* --- 各セクションのカードスタイル --- */
 .section-card {
+    /* 背景色を濃いグレーに設定。 */
     background-color: #1a1a1a;
+    /* 内側に2remの余白を設けます。 */
     padding: 2rem;
+    /* 角を8pxの丸みにします。値を大きくすると丸みが強くなります。 */
     border-radius: 8px;
+    /* 半透明の黒い影をつけて立体感を出します。 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    /* 下側に2remの余白を設けます。 */
     margin-bottom: 2rem;
+    /* 中の要素がはみ出た場合に隠します。 */
     overflow: hidden;
 }
 
+/* ============================================= */
 /* --- スライドバナーのスタイル --- */
+/* ============================================= */
+
 #banner-container {
+    /* 内側の余白を少しだけ設けます。 */
     padding: 0.2rem;
 }
 
 .banner-swiper {
+    /* 幅を親要素いっぱいに広げます。 */
     width: 100%;
+    /* 左右に2remの余白を設け、スライドが少しはみ出して見えるようにします。 */
     padding: 0 2rem;
+    /* paddingを含めて幅を計算するようにします。 */
     box-sizing: border-box;
 }
 
 .swiper-slide {
+    /* 中の要素を中央揃えにします。 */
     text-align: center;
+    /* 背景色をbodyと同じダークグレーに設定。 */
     background: #2e2e2e;
+    /* Flexboxを使って中の要素を完全に中央に配置します。 */
     display: flex;
     justify-content: center;
     align-items: center;
+    /* `slide-overlay`の基準点とするために設定。 */
     position: relative;
+    /* 角を8px丸めます。 */
     border-radius: 8px;
+    /* はみ出た画像などを隠します。 */
     overflow: hidden;
+    /* アスペクト比を1:1（正方形）に保ちます。 */
     aspect-ratio: 1 / 1;
+    /* 高さを自動調整します。 */
     height: auto;
-    transform: translateZ(0); /* アニメーションの描画不具合を解消するおまじない */
+    /* アニメーションの描画不具合を解消するおまじないです。 */
+    transform: translateZ(0);
 }
 
 .swiper-slide a {
+    /* リンクエリアをスライド全体に広げます。 */
     display: block;
     width: 100%;
     height: 100%;
+    /* 下線を消します。 */
     text-decoration: none;
+    /* 親要素の文字色を継承します。 */
     color: inherit;
     position: relative;
 }
 
 .swiper-slide img {
+    /* 画像を親要素いっぱいに表示します。 */
     display: block;
     width: 100%;
     height: 100%;
+    /* アスペクト比を保ったまま、要素を完全に覆うように画像を拡大・縮小します。 */
     object-fit: cover;
+    /* マウスを乗せたときの拡大アニメーションを0.3秒かけて滑らかにします。 */
     transition: transform 0.3s ease;
 }
 
 .swiper-slide a:hover img {
+    /* マウスを乗せたとき、画像を1.05倍に拡大します。 */
     transform: scale(1.05);
 }
 
 .slide-overlay {
+    /* `swiper-slide`を基準に、絶対位置で配置します。 */
     position: absolute;
     bottom: 0;
     left: 0;
+    /* 幅を100%にします。 */
     width: 100%;
+    /* 内側に1remの余白を設けます。 */
     padding: 1rem;
+    /* 下から上へ、透明から半透明の黒へのグラデーションをかけます。 */
     background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+    /* 文字色を白にします。 */
     color: #fff;
+    /* Flexboxを使い、中の要素（タイトルとボタン）を縦に並べ、下に配置します。 */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
     box-sizing: border-box;
+    /* このオーバーレイ自体はクリックできないようにします。 */
     pointer-events: none;
 }
 
 .slide-title {
+    /* 文字サイズを1.2remにします。 */
     font-size: 1.2rem;
+    /* 文字を太字にします。 */
     font-weight: bold;
+    /* 下に0.5remの余白を設けます。 */
     margin-bottom: 0.5rem;
+    /* 文字を大文字にします。 */
     text-transform: uppercase;
     pointer-events: none;
 }
 
 .slide-button {
+    /* 背景色を半透明の白にします。 */
     background-color: #ffffff99;
+    /* 文字色を白にします。 */
     color: white;
+    /* 枠線を消します。 */
     border: none;
+    /* 内側の余白を上下0.6rem、左右1.7remに設定します。 */
     padding: 0.6rem 1.7rem;
+    /* 角を完全に丸くして、カプセル型にします。 */
     border-radius: 50px;
+    /* カーソルを指の形にします。 */
     cursor: pointer;
+    /* 文字を太字にします。 */
     font-weight: bold;
+    /* 背景色の変化を0.3秒かけて滑らかにします。 */
     transition: background-color 0.3s ease;
+    /* ボタンはクリックできるようにします。 */
     pointer-events: auto;
 }
 
 .slide-button:hover {
+    /* マウスを乗せたとき、背景色を濃い青に変更します。 */
     background-color: #0056b3;
 }
 
 .swiper-pagination {
+    /* `banner-swiper`を基準に配置します。 */
     position: relative;
+    /* 上に1.5remずらして配置します。 */
     top: 1.5rem;
     text-align: center;
 }
 
 .swiper-pagination-bullet {
+    /* 通常時のページネーションの色を中間グレー(#555)にします。 */
     background-color: #555;
-    opacity: 1;
+    opacity: 1; /* 不透明にします */
+    /* ページネーション間の余白を左右6pxに設定します。 */
     margin: 0 6px;
+    /* 大きさを10px x 10pxの円にします。 */
     width: 10px;
     height: 10px;
     transition: background-color 0.3s;
 }
 
 .swiper-pagination-bullet-active {
+    /* 現在表示中のスライドに対応するページネーションの色を青(#007bff)にします。 */
     background-color: #007bff;
 }
 
+/* ============================================= */
 /* --- アプリ一覧グリッドのスタイル --- */
+/* ============================================= */
+
 #app-grid-container {
+    /* 上側の内側に1remの余白を設けます。 */
     padding-top: 1rem;
 }
 
 .app-grid-layout {
+    /* グリッドレイアウトを適用します。 */
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    /* 各列の最小幅を160pxとし、画面幅に応じて自動で列数を調整します。 */
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    /* グリッドアイテム間のすき間を1.5remに設定します。 */
     gap: 1.5rem;
     padding-top: 1rem;
 }
 
 .app-item {
+    /* 下線を消します。 */
     text-decoration: none;
+    /* 文字色を明るいグレーにします。 */
     color: #f0f0f0;
+    /* 背景色をダークグレーにします。 */
     background-color: #2e2e2e;
+    /* 角を12px丸めます。 */
     border-radius: 12px;
+    /* 半透明の黒い影をつけます。 */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    /* マウスを乗せたときの動きを0.2秒かけて滑らかにします。 */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* `app-icon`の基準点とします。 */
     position: relative;
+    /* はみ出た要素を隠します。 */
     overflow: hidden;
+    /* アスペクト比を1:1（正方形）に保ちます。 */
     aspect-ratio: 1 / 1;
+    /* Flexboxを使い、中のタイトルを下端に配置します。 */
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    /* 下側の内側に1remの余白を設けます。 */
     padding-bottom: 1rem;
 }
 
 .app-item:hover {
+    /* マウスを乗せたとき、上に5px移動させます。 */
     transform: translateY(-5px);
+    /* マウスを乗せたとき、影を少し濃くして浮き上がったように見せます。 */
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
 }
 
 .app-icon {
+    /* 親要素(`app-item`)を基準に、絶対位置で配置します。 */
     position: absolute;
     top: 0;
     left: 0;
+    /* 親要素いっぱいに広げます。 */
     width: 100%;
     height: 100%;
+    /* アスペクト比を保ったまま、要素を完全に覆うように画像を調整します。 */
     object-fit: cover;
+    /* 角を12px丸めます。 */
     border-radius: 12px;
+    /* 画像の明るさを少し暗く(90%)します。 */
     filter: brightness(0.9);
+    /* 明るさの変化を0.3秒かけて滑らかにします。 */
     transition: filter 0.3s ease;
 }
 
 .app-item:hover .app-icon {
+    /* マウスを乗せたとき、画像の明るさをさらに暗く(80%)します。 */
     filter: brightness(0.8);
 }
 
 
 .app-title {
+    /* 文字サイズを0.95remにします。 */
     font-size: 0.95rem;
+    /* 文字の太さを500にします。 */
     font-weight: 500;
     text-align: center;
+    /* 長いタイトルが改行されないようにします。 */
     white-space: nowrap;
+    /* はみ出た文字を隠します。 */
     overflow: hidden;
+    /* はみ出た部分を「...」で表示します。 */
     text-overflow: ellipsis;
+    /* 最大幅を100%にします。 */
     max-width: 100%;
     position: relative;
+    /* アイコン画像より手前に表示します。 */
     z-index: 1;
+    /* 左右に少し余白を設けます。 */
     padding: 0 0.5rem;
+    /* 文字に黒い影をつけ、背景画像があっても読みやすくします。 */
     text-shadow: 0 0 5px rgba(0,0,0,0.8);
 }
 
-/* --- ▼▼▼ ページビューワーのスタイルを修正 ▼▼▼ --- */
+/* ============================================= */
+/* --- ページビューワーのスタイル --- */
+/* ============================================= */
 
-/* 汎用の非表示クラスを display: none; に変更 */
 .hidden {
+    /* このクラスが付いた要素を非表示にします。 */
     display: none;
 }
 
-/* アニメーション関連のスタイルを削除し、レイアウトをシンプルに保つ */
 #page-viewer {
+    /* 最大幅を900pxに設定します。 */
     max-width: 900px;
-    margin: 0 auto;
+    /* 上下に2remの余白を設け、左右は自動で中央寄せにします。 */
+    margin: 2rem auto;
     padding: 2rem;
     background-color: #1a1a1a;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     color: #f0f0f0;
-    position: relative; 
+    position: relative;
 }
 
-/* ▲▲▲ ここまで修正 ▲▲▲ */
-
-
 #back-button {
+    /* 背景色を半透明の白にします。 */
     background-color: #ffffff2d;
+    /* 文字色を半透明の白にします。 */
     color: rgba(255, 255, 255, 0.856);
     border: none;
+    /* 内側の余白を上下0.7rem、左右0.8remに設定します。 */
     padding: 0.7rem 0.8rem;
     border-radius: 5px;
     cursor: pointer;
+    /* 文字の太さを通常にします。 */
     font-weight: normal;
     font-size: 0.8rem;
+    /* 下に2remの余白を設けます。 */
     margin-bottom: 2rem;
     transition: background-color 0.3s ease;
 }
 
 #back-button:hover {
+    /* マウスを乗せたとき、背景色を半透明の青にします。 */
     background-color: #0057b39d;
 }
 
 #page-content h1, #page-content h2, #page-content h3 {
+    /* 見出しの下に中間グレー(#555)の線を引きます。 */
     border-bottom: 2px solid #555;
+    /* 線と文字の間に0.5remの余白を設けます。 */
     padding-bottom: 0.5rem;
+    /* 上下に余白を設けます。 */
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
 
 #page-content img {
+    /* 画像が親要素からはみ出ないように最大幅を100%にします。 */
     max-width: 100%;
+    /* 高さは自動調整します。 */
     height: auto;
     border-radius: 8px;
+    /* 上下に1remの余白を設けます。 */
     margin: 1rem 0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 #page-content a {
+    /* リンクの文字色を明るい青にします。 */
     color: #00aaff;
     text-decoration: none;
 }
 #page-content a:hover {
+    /* マウスを乗せたとき、下線を表示します。 */
     text-decoration: underline;
 }
 
 #page-content code {
+    /* コード部分の背景色をダークグレーにします。 */
     background-color: #2e2e2e;
+    /* 内側に少し余白を設けます。 */
     padding: 0.2rem 0.4rem;
     border-radius: 4px;
 }
 
 #page-content hr {
+    /* 水平線のデフォルトスタイルをリセットします。 */
     border: 0;
+    /* 上側に1pxの中間グレーの線を引きます。 */
     border-top: 1px solid #555;
+    /* 上下に2remの余白を設けます。 */
     margin: 2rem 0;
 }
 
-/* --- ▼▼▼ 外部アプリ(iframe)表示用のスタイルを修正 ▼▼▼ --- */
+#page-content video {
+    /* ビデオをブロック要素として扱い、中央寄せを可能にします。 */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    /* ビデオが親要素からはみ出ないようにします。 */
+    max-width: 100%;
+}
 
-/* アニメーション関連のスタイルを削除 */
+/* ============================================= */
+/* --- 外部アプリ(iframe)表示用のスタイル --- */
+/* ============================================= */
+
 #app-container {
+    /* 画面全体を覆うように固定表示します。 */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: #1a1a1a;
+    /* 他の要素より手前に表示します。値を大きくするとより手前に来ます。 */
     z-index: 1000;
 }
 
-/* ▲▲▲ ここまで修正 ▲▲▲ */
-
 #close-app-button {
+    /* 画面の右上に固定表示します。 */
     position: absolute;
-    top: 80px;
-    right: 20px;
+    top: 80px; /* 上からの距離 */
+    right: 20px; /* 右からの距離 */
+    /* ボタンのサイズを40pxの正方形にします。 */
     width: 40px;
     height: 40px;
+    /* 背景色を半透明の黒にします。 */
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
+    /* 枠線を半透明の白にします。 */
     border: 1px solid rgba(255, 255, 255, 0.3);
+    /* 角を完全に丸くして円にします。 */
     border-radius: 50%;
+    /* 文字サイズを24pxにします。 */
     font-size: 24px;
+    /* 文字「×」を縦方向に中央揃えにします。 */
     line-height: 40px;
     text-align: center;
     cursor: pointer;
+    /* iframeよりさらに手前に表示します。 */
     z-index: 1001;
+    /* アニメーションを0.3秒かけて滑らかにします。 */
     transition: background-color 0.3s, transform 0.3s;
 }
 
 #close-app-button:hover {
+    /* マウスを乗せたとき、背景色を濃くします。 */
     background-color: rgba(0, 0, 0, 0.8);
+    /* マウスを乗せたとき、90度回転させます。 */
     transform: rotate(90deg);
 }
 
 #app-frame {
+    /* iframeを親要素いっぱいに広げます。 */
     width: 100%;
     height: 100%;
+    /* 枠線を消します。 */
     border: none;
 }
 
 
+/* ============================================= */
 /* --- レスポンシブ対応 --- */
+/* ============================================= */
+
+/* --- 大型スクリーン (1601px以上) --- */
+@media (min-width: 1601px) {
+    .app-grid-layout {
+        /* アプリアイコンの最小幅を180pxに広げます。 */
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        /* アイコン間のすき間を2remに広げます。 */
+        gap: 2rem;
+    }
+    .slide-title {
+        /* バナーのタイトル文字を少し大きくします。 */
+        font-size: 1.5rem;
+    }
+}
+
+/* --- タブレット (1024px以下) --- */
+@media (max-width: 1024px) {
+    .app-grid-layout {
+        /* アプリアイコンの最小幅を140pxに狭めます。 */
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        /* アイコン間のすき間を1remに狭めます。 */
+        gap: 1rem;
+    }
+    .banner-swiper {
+        /* バナーの左右の余白を少し狭めます。 */
+        padding: 0 1.5rem;
+    }
+    .swiper-slide {
+        /* バナーのアスペクト比を16:10（少し横長）に変更します。 */
+        aspect-ratio: 16/10;
+    }
+}
+
+
+/* --- スマートフォン (768px以下) --- */
 @media (max-width: 768px) {
     .header-content {
+        /* ヘッダーのロゴとメニューを縦並びに変更します。 */
         flex-direction: column;
     }
     .main-nav ul {
+        /* ロゴとの間に余白を設けます。 */
         margin-top: 1rem;
     }
     .main-nav li {
+        /* メニュー間の余白を調整します。 */
         margin: 0 0.5rem;
     }
     .banner-swiper {
         padding: 0 1rem;
     }
     .swiper-slide {
+        /* バナーのアスペクト比を16:9（一般的な動画比率）に変更します。 */
         aspect-ratio: 16 / 9;
     }
     .app-grid-layout {
+        /* アプリアイコンの最小幅を100pxに狭めます。 */
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     }
     .app-icon {
@@ -409,22 +635,21 @@ main {
         padding: 0;
         padding-bottom: 0.8rem;
     }
-    .site-header h1, .section-header-alt h1 {
-        font-size: 1.2rem;
-    }
     .logo img {
+        /* ロゴの高さを30pxに小さくします。 */
         height: 30px;
     }
     #page-viewer {
+        /* 詳細ページの余白を調整します。 */
         padding: 1rem;
+        margin: 1rem;
     }
     .app-title {
+        /* アプリアイコンのタイトル文字を少し小さくします。 */
         font-size: 0.85rem;
     }
-}
-
-#page-content video {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+    .section-card {
+        /* 各セクションの内側の余白を調整します。 */
+        padding: 1.5rem 1rem;
+    }
 }
