@@ -155,8 +155,6 @@ function generateAppGrid() {
         const link = document.createElement('a');
         link.href = app.url;
         link.className = 'app-item';
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
 
         const icon = document.createElement('img');
         icon.src = app.icon;
