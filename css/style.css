@@ -569,11 +569,11 @@ main {
 /* --- レスポンシブ対応 --- */
 /* ============================================= */
 
-/* --- スマートフォン (〜768px) --- */
-/* このメディアクエリは元のコードを基本的に維持し、スマホでの表示を最適化します。*/
+/* --- スマートフォン (〜768px / 縦画面想定) --- */
+/* スマートフォンの縦画面表示に最適化します。バナーは16:9の横長です。 */
 @media (max-width: 768px) {
     .header-content {
-        flex-direction: column; /* ヘッダーのロゴとメニューを縦並びに */
+        flex-direction: column;
     }
     .main-nav ul {
         margin-top: 1rem;
@@ -585,73 +585,65 @@ main {
         padding: 0 1rem;
     }
     .swiper-slide {
-        aspect-ratio: 16 / 9; /* スマホではバナーを横長の長方形に */
+        aspect-ratio: 16 / 9;
     }
     .app-grid-layout {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* アイコンの最小サイズを指定 */
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     }
     .app-item {
         padding: 0;
         padding-bottom: 0.8rem;
     }
     .logo img {
-        height: 30px; /* ロゴを少し小さく */
+        height: 30px;
     }
     #page-viewer {
         padding: 1rem;
         margin: 1rem;
     }
     .app-title {
-        font-size: 0.85rem; /* アイコンのタイトルを少し小さく */
+        font-size: 0.85rem;
     }
     .section-card {
         padding: 1.5rem 1rem;
     }
 }
 
-/* --- タブレット (769px 〜 1024px) --- */
-/* iPadの縦向きなどを想定したスタイルです。バナーは少し横長(4:3)にし、アイコンもスマホより大きく見せます。*/
+/* --- タブレット (769px 〜 1024px / 縦画面想定) --- */
+/* iPadなどのタブレットの「縦画面」での利用を想定したスタイルです。*/
 @media (min-width: 769px) and (max-width: 1024px) {
+    /* 縦画面でのバランスを考慮し、バナーを正方形(1:1)に設定します */
     .swiper-slide {
-        aspect-ratio: 4 / 3; /* バナーを4:3の比率に */
+        aspect-ratio: 1 / 1;
     }
     .app-grid-layout {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* アイコンサイズを調整 */
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* アイコンをスマホより大きく */
         gap: 1.5rem;
+    }
+    .app-title {
+        font-size: 1rem;
     }
 }
 
-/* --- 小型PC・タブレット横向き (1025px 〜 1600px) --- */
-/* iPadの横向きや一般的なノートPCを想定したスタイルです。バナーはよりPCに近い比率(16:10)にします。*/
-@media (min-width: 1025px) and (max-width: 1600px) {
+/* --- PC (1025px以上 / 横画面想定) --- */
+/* PCモニターなど、横長のディスプレイを想定したスタイルです。*/
+@media (min-width: 1025px) {
+    /* 横長の画面に合わせて、バナーを16:9の比率に設定します */
     .swiper-slide {
-        aspect-ratio: 16 / 10; /* バナーを16:10の比率に */
+        aspect-ratio: 1 / 1;
     }
     .app-grid-layout {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* アイコンサイズを調整 */
-        gap: 1.5rem;
-    }
-}
-
-/* --- 大型PC・デジタルサイネージ (1601px以上) --- */
-/* フルHDのPCモニターや、それ以上の解像度を持つデジタルサイネージを想定したスタイルです。*/
-/* 全体的に要素を大きくし、視認性を高めます。*/
-@media (min-width: 1601px) {
-    .swiper-slide {
-        aspect-ratio: 16 / 9; /* バナーを一般的な動画比率である16:9に */
-    }
-    .app-grid-layout {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* アイコンを大きく表示 */
-        gap: 2rem; /* アイコン間の余白を広げる */
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* アイコンをさらに大きく */
+        gap: 2rem;
     }
     .slide-title {
-        font-size: 1.8rem; /* バナーのタイトルを大きく */
+        font-size: 1.8rem;
     }
     .slide-button {
-        padding: 0.8rem 2.2rem; /* バナーのボタンを大きく */
+        padding: 0.8rem 2.2rem;
         font-size: 1.1rem;
     }
     .app-title {
-        font-size: 1.1rem; /* アプリアイコンのタイトルを大きく */
+        font-size: 1.1rem;
     }
 }
