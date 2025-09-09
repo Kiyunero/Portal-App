@@ -184,8 +184,6 @@ main {
     overflow: hidden;
     /* アスペクト比を1:1（正方形）に保ちます。 */
     aspect-ratio: 1 / 1;
-    /* 高さを自動調整します。 */
-    height: auto;
     /* アニメーションの描画不具合を解消するおまじないです。 */
     transform: translateZ(0);
 }
