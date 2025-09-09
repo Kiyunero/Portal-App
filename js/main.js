@@ -55,6 +55,16 @@ const appDatabase = [
         bannerButtonText: 'MORE',
         howToPage: 'how-to/monster-hunter.md'
     },
+    {
+        id: 'manga',
+        title: '漫画風聖地巡礼図鑑',
+        icon: 'images/app_icon_manga.png',
+        url: 'https://kiyunero.github.io/manga_seitijunrei/',
+        showOnBanner: true,
+        bannerImage: 'images/banner_manga.png',
+        bannerButtonText: 'MORE',
+        howToPage: 'how-to/manga.md'
+    },
 ];
 
 // =============================================
@@ -70,7 +80,6 @@ const appContainer = document.getElementById('app-container');
 const appFrame = document.getElementById('app-frame');
 const closeAppButton = document.getElementById('close-app-button');
 
-// ▼▼▼【修正点1】Swiperインスタンスを保持する変数を宣言 ▼▼▼
 let mySwiper;
 
 // =============================================
@@ -94,13 +103,10 @@ function preloadResources(urls) {
         }
         document.head.appendChild(link);
         preloadedUrls.add(url);
-        console.log(`Prefetching: ${url}`);
     });
 }
 
-// ✨追加: すべてのバナーコンテンツを先読みする関数
 function preloadAllBannerContents() {
-    console.log('Starting to preload all banner contents...');
     const resourcesToPreload = [];
     appDatabase.forEach(app => {
         if (app.showOnBanner) {
@@ -125,6 +131,12 @@ function closeApp() {
     appContainer.classList.add('hidden');
     mainContents.classList.remove('hidden');
     appFrame.src = "";
+
+    // Swiperインスタンスを破棄して再初期化
+    if (mySwiper) {
+        mySwiper.destroy();
+    }
+    initializeSwiper();
 }
 
 // =============================================
@@ -182,9 +194,6 @@ function generateBanners() {
             </a>
         `;
         bannerWrapper.appendChild(slide);
-
-        // ✨削除: マウスホバーによる先読みイベントリスナーは不要なため削除
-        // slide.addEventListener('mouseenter', () => { ... });
     });
 
     bannerWrapper.addEventListener('click', (event) => {
@@ -230,10 +239,12 @@ function generateAppGrid() {
 // Swiper.js の初期化
 // =============================================
 function initializeSwiper() {
-    // ▼▼▼【修正点2】作成したインスタンスを mySwiper 変数に代入 ▼▼▼
     mySwiper = new Swiper('.banner-swiper', {
         loop: true,
-        autoplay: { delay: 3000, disableOnInteraction: false },
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false
+        },
         centeredSlides: true,
         slidesPerView: 3,
         spaceBetween: 20,
@@ -265,12 +276,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         showMainContents();
 
-        // ▼▼▼【修正点3】メインコンテンツ表示後にSwiperを更新 ▼▼▼
+        // Swiperインスタンスを破棄して再初期化
         if (mySwiper) {
-            mySwiper.update();
+            mySwiper.destroy();
         }
+        initializeSwiper();
     });
     
-    // ✨変更点: ページ初期化時に、すべてのバナーコンテンツの先読みを開始
     preloadAllBannerContents();
 });
