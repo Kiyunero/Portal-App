@@ -10,7 +10,8 @@ const appDatabase = [
         showOnBanner: true,
         bannerImage: 'images/banner_ASJ.png',
         bannerButtonText: 'MORE',
-        howToPage: 'how-to/asj-hotel.md'
+        howToPage: 'how-to/asj-hotel.md',
+        videoUrl: 'https://firebasestorage.googleapis.com/v0/b/pilgrimage-quest-app.firebasestorage.app/o/%E5%A5%A5%E5%A4%9A%E6‘©_%E6%A8%AA%E7%94%BB%E9%9D%A2.mp4?alt=media&token=9cf70644-9f17-485e-a29b-03302329fb24'
     },
     {
         id: 'mebuku',
@@ -20,7 +21,8 @@ const appDatabase = [
         showOnBanner: true,
         bannerImage: 'images/banner_mebuku.png',
         bannerButtonText: 'MORE',
-        howToPage: 'how-to/mebuku.md'
+        howToPage: 'how-to/mebuku.md',
+        videoUrl: 'https://firebasestorage.googleapis.com/v0/b/pilgrimage-quest-app.firebasestorage.app/o/%E3%82%81%E3%81%B6%E3%81%8F_%E6%A8%AA%E7%94%BB%E9%9D%A2.mp4?alt=media&token=f9195110-13b9-49da-9057-49705af97c5d'
     },
     {
         id: 'maebashi-witches',
@@ -30,7 +32,8 @@ const appDatabase = [
         showOnBanner: true,
         bannerImage: 'images/banner_witch.png',
         bannerButtonText: 'MORE',
-        howToPage: 'how-to/maebashi-witches.md'
+        howToPage: 'how-to/maebashi-witches.md',
+        videoUrl: 'https://firebasestorage.googleapis.com/v0/b/pilgrimage-quest-app.firebasestorage.app/o/%E3%82%A6%E3%82%A3%E3%83%83%E3%83%81%E3%83%BC%E3%82%BAOP_%E6%A8%AA%E7%94%BB%E9%9D%A2.mp4?alt=media&token=16e1ca27-1760-4265-bb77-0fdaf2e8402e'
     },
     {
         id: 'zasupa',
@@ -67,6 +70,47 @@ const appContainer = document.getElementById('app-container');
 const appFrame = document.getElementById('app-frame');
 const closeAppButton = document.getElementById('close-app-button');
 
+// ▼▼▼【修正点1】Swiperインスタンスを保持する変数を宣言 ▼▼▼
+let mySwiper;
+
+// =============================================
+// リソースの先読み（プリフェッチ）機能
+// =============================================
+const preloadedUrls = new Set(); 
+
+function preloadResources(urls) {
+    urls.forEach(url => {
+        if (!url || preloadedUrls.has(url)) {
+            return;
+        }
+
+        const link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = url;
+        if (url.endsWith('.mp4')) {
+            link.as = 'video';
+        } else {
+            link.as = 'fetch';
+        }
+        document.head.appendChild(link);
+        preloadedUrls.add(url);
+        console.log(`Prefetching: ${url}`);
+    });
+}
+
+// ✨追加: すべてのバナーコンテンツを先読みする関数
+function preloadAllBannerContents() {
+    console.log('Starting to preload all banner contents...');
+    const resourcesToPreload = [];
+    appDatabase.forEach(app => {
+        if (app.showOnBanner) {
+            if (app.howToPage) resourcesToPreload.push(app.howToPage);
+            if (app.videoUrl) resourcesToPreload.push(app.videoUrl);
+        }
+    });
+    preloadResources(resourcesToPreload);
+}
+
 // =============================================
 // 外部アプリの起動・終了処理
 // =============================================
@@ -96,13 +140,11 @@ async function showPage(pagePath) {
 
         pageContent.innerHTML = marked.parse(markdown);
 
-        // ▼▼▼ ビデオ処理を簡略化 ▼▼▼
         const video = pageContent.querySelector('video');
         if (video) {
-            video.volume = 0.5; // 音量を50%に設定（または1.0でもOK）
-            video.play().catch(e => console.log("Autoplay was prevented."));
+            video.volume = 0.5;
+            video.play().catch(e => console.log("Autoplay was prevented. User interaction needed."));
         }
-        // ▲▲▲ 音声フェードイン処理を削除 ▲▲▲
 
         mainContents.classList.add('hidden');
         pageViewer.classList.remove('hidden');
@@ -140,6 +182,9 @@ function generateBanners() {
             </a>
         `;
         bannerWrapper.appendChild(slide);
+
+        // ✨削除: マウスホバーによる先読みイベントリスナーは不要なため削除
+        // slide.addEventListener('mouseenter', () => { ... });
     });
 
     bannerWrapper.addEventListener('click', (event) => {
@@ -185,10 +230,11 @@ function generateAppGrid() {
 // Swiper.js の初期化
 // =============================================
 function initializeSwiper() {
-    new Swiper('.banner-swiper', {
+    // ▼▼▼【修正点2】作成したインスタンスを mySwiper 変数に代入 ▼▼▼
+    mySwiper = new Swiper('.banner-swiper', {
         loop: true,
         autoplay: { delay: 3000, disableOnInteraction: false },
-        centeredSlides: true, // アクティブなスライドを中央に配置
+        centeredSlides: true,
         slidesPerView: 3,
         spaceBetween: 20,
         breakpoints: {
@@ -211,19 +257,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeAppButton.addEventListener('click', closeApp);
 
-    // ▼▼▼ BACK TO HOMEボタンの処理を簡略化 ▼▼▼
     backButton.addEventListener('click', () => {
-        // ページビューワー内のビデオを探す
         const video = pageContent.querySelector('video');
-        
-        // もしビデオがあれば、再生を停止する
         if (video) {
             video.pause();
             video.currentTime = 0;
         }
-        
-        // メインコンテンツを表示する（ビデオの有無に関わらず共通の処理）
         showMainContents();
+
+        // ▼▼▼【修正点3】メインコンテンツ表示後にSwiperを更新 ▼▼▼
+        if (mySwiper) {
+            mySwiper.update();
+        }
     });
-    // ▲▲▲ ここまで修正 ▲▲▲
+    
+    // ✨変更点: ページ初期化時に、すべてのバナーコンテンツの先読みを開始
+    preloadAllBannerContents();
 });
