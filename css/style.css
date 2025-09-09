@@ -569,84 +569,89 @@ main {
 /* --- レスポンシブ対応 --- */
 /* ============================================= */
 
-/* --- 大型スクリーン (1601px以上) --- */
-@media (min-width: 1601px) {
-    .app-grid-layout {
-        /* アプリアイコンの最小幅を180pxに広げます。 */
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        /* アイコン間のすき間を2remに広げます。 */
-        gap: 2rem;
-    }
-    .slide-title {
-        /* バナーのタイトル文字を少し大きくします。 */
-        font-size: 1.5rem;
-    }
-}
-
-/* --- タブレット (1024px以下) --- */
-@media (max-width: 1024px) {
-    .app-grid-layout {
-        /* アプリアイコンの最小幅を140pxに狭めます。 */
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        /* アイコン間のすき間を1remに狭めます。 */
-        gap: 1rem;
-    }
-    .banner-swiper {
-        /* バナーの左右の余白を少し狭めます。 */
-        padding: 0 1.5rem;
-    }
-    /* このセクションでは .swiper-slide のアスペクト比は変更せず、デフォルトの正方形を維持します。 */
-}
-
-
-/* --- スマートフォン (768px以下) --- */
+/* --- スマートフォン (〜768px) --- */
+/* このメディアクエリは元のコードを基本的に維持し、スマホでの表示を最適化します。*/
 @media (max-width: 768px) {
     .header-content {
-        /* ヘッダーのロゴとメニューを縦並びに変更します。 */
-        flex-direction: column;
+        flex-direction: column; /* ヘッダーのロゴとメニューを縦並びに */
     }
     .main-nav ul {
-        /* ロゴとの間に余白を設けます。 */
         margin-top: 1rem;
     }
     .main-nav li {
-        /* メニュー間の余白を調整します。 */
         margin: 0 0.5rem;
     }
     .banner-swiper {
         padding: 0 1rem;
     }
     .swiper-slide {
-        /* スマホの時だけアスペクト比を16:9（長方形）に変更 */
-        aspect-ratio: 16 / 9;
+        aspect-ratio: 16 / 9; /* スマホではバナーを横長の長方形に */
     }
     .app-grid-layout {
-        /* アプリアイコンの最小幅を100pxに狭めます。 */
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    }
-    .app-icon {
-        width: 100%;
-        height: 100%;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* アイコンの最小サイズを指定 */
     }
     .app-item {
         padding: 0;
         padding-bottom: 0.8rem;
     }
     .logo img {
-        /* ロゴの高さを30pxに小さくします。 */
-        height: 30px;
+        height: 30px; /* ロゴを少し小さく */
     }
     #page-viewer {
-        /* 詳細ページの余白を調整します。 */
         padding: 1rem;
         margin: 1rem;
     }
     .app-title {
-        /* アプリアイコンのタイトル文字を少し小さくします。 */
-        font-size: 0.85rem;
+        font-size: 0.85rem; /* アイコンのタイトルを少し小さく */
     }
     .section-card {
-        /* 各セクションの内側の余白を調整します。 */
         padding: 1.5rem 1rem;
+    }
+}
+
+/* --- タブレット (769px 〜 1024px) --- */
+/* iPadの縦向きなどを想定したスタイルです。バナーは少し横長(4:3)にし、アイコンもスマホより大きく見せます。*/
+@media (min-width: 769px) and (max-width: 1024px) {
+    .swiper-slide {
+        aspect-ratio: 4 / 3; /* バナーを4:3の比率に */
+    }
+    .app-grid-layout {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* アイコンサイズを調整 */
+        gap: 1.5rem;
+    }
+}
+
+/* --- 小型PC・タブレット横向き (1025px 〜 1600px) --- */
+/* iPadの横向きや一般的なノートPCを想定したスタイルです。バナーはよりPCに近い比率(16:10)にします。*/
+@media (min-width: 1025px) and (max-width: 1600px) {
+    .swiper-slide {
+        aspect-ratio: 16 / 10; /* バナーを16:10の比率に */
+    }
+    .app-grid-layout {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* アイコンサイズを調整 */
+        gap: 1.5rem;
+    }
+}
+
+/* --- 大型PC・デジタルサイネージ (1601px以上) --- */
+/* フルHDのPCモニターや、それ以上の解像度を持つデジタルサイネージを想定したスタイルです。*/
+/* 全体的に要素を大きくし、視認性を高めます。*/
+@media (min-width: 1601px) {
+    .swiper-slide {
+        aspect-ratio: 16 / 9; /* バナーを一般的な動画比率である16:9に */
+    }
+    .app-grid-layout {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* アイコンを大きく表示 */
+        gap: 2rem; /* アイコン間の余白を広げる */
+    }
+    .slide-title {
+        font-size: 1.8rem; /* バナーのタイトルを大きく */
+    }
+    .slide-button {
+        padding: 0.8rem 2.2rem; /* バナーのボタンを大きく */
+        font-size: 1.1rem;
+    }
+    .app-title {
+        font-size: 1.1rem; /* アプリアイコンのタイトルを大きく */
     }
 }
