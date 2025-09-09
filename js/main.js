@@ -241,8 +241,9 @@ function generateAppGrid() {
 function initializeSwiper() {
     mySwiper = new Swiper('.banner-swiper', {
         loop: true,
+        speed: 1500,
         autoplay: {
-            delay: 3000,
+            delay: 2000,
             disableOnInteraction: false
         },
         centeredSlides: true,
