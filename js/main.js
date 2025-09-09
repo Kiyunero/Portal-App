@@ -254,7 +254,9 @@ document.addEventListener('DOMContentLoaded', () => {
     generateBanners();
     generateAppGrid();
     initializeSwiper();
-
+    
+    setTimeout(() => mySwiper.update(), 100);
+    
     closeAppButton.addEventListener('click', closeApp);
 
     backButton.addEventListener('click', () => {
