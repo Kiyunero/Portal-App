@@ -15,15 +15,13 @@ const appDatabase = [
 // ゲームキャラクター関連のデータと状態管理
 // =============================================
 const characters = [
-    // ▼▼▼ 修正 ▼▼▼
-    { id: 'char01', name: 'ユイナ', iconUrl: 'images/yuina.gif', selectIconUrl: 'images/select_yuina.png' }, // selectIconUrlを追加
-    { id: 'char02', name: 'チョコ', iconUrl: 'images/tyoko.gif', selectIconUrl: 'images/select_tyoko.png' }, // selectIconUrlを追加
-    { id: 'char03', name: 'アズ', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_azu.png' }, // selectIconUrlを追加
-    { id: 'char04', name: 'マイ', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_mai.png' }, // selectIconUrlを追加
-    { id: 'char05', name: 'キョウカ', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_kyouka.png' }, // selectIconUrlを追加
-    { id: 'char06', name: '係長', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_sarari-man.png' }, // selectIconUrlを追加
-    { id: 'char03', name: '？？？', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_baka.png' }, // selectIconUrlを追加
-    // ▲▲▲ 修正 ▲▲▲
+    { id: 'char01', name: 'ユイナ', iconUrl: 'images/yuina.gif', selectIconUrl: 'images/select_yuina.png' },
+    { id: 'char02', name: 'チョコ', iconUrl: 'images/tyoko.gif', selectIconUrl: 'images/select_tyoko.png' },
+    { id: 'char03', name: 'アズ', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_azu.png' },
+    { id: 'char04', name: 'マイ', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_mai.png' },
+    { id: 'char05', name: 'キョウカ', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_kyouka.png' },
+    { id: 'char06', name: '係長', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_sarari-man.png' },
+    { id: 'char07', name: '？？？', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_baka.png' }, // IDの重複を修正
     // 他のキャラクターをここに追加
 ];
 
@@ -81,13 +79,17 @@ document.addEventListener('DOMContentLoaded', () => {
     async function initGame() {
         const { Map } = await google.maps.importLibrary("maps");
 
+        // ▼▼▼ 修正 ▼▼▼
         const mapOptions = {
             center: { lat: 36.3910, lng: 139.0609 },
             zoom: 15,
             disableDefaultUI: true,
+            // Google Cloud Consoleで作成した新しいマップIDをここに貼り付けます
             mapId: '99dd0dbc4f056e1f512df909'
         };
-        console.log("マップの初期化に使用されているMap ID:", mapOptions.mapId);
+        // ▲▲▲ 修正 ▲▲▲
+        
+        console.log("新しいマップIDでマップを初期化します:", mapOptions.mapId);
         map = new Map(gameCanvas, mapOptions);
     
         startGpsTracking();
@@ -129,9 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
             item.dataset.charId = char.id;
 
             const icon = document.createElement('img');
-            // ▼▼▼ 修正 ▼▼▼
             icon.src = char.selectIconUrl; // 選択画面用の画像を使用
-            // ▲▲▲ 修正 ▲▲▲
             icon.alt = char.name;
             icon.className = 'character-icon';
 
