@@ -24,7 +24,7 @@
                 <ul>
                     <li><a href="#">HOME</a></li>
                     <li><a href="#">MY APPS</a></li>
-                    <li><a href="#">CONTACT</a></li>
+                    <li><a href="#" id="contact-button">2D WORLD!</a></li>
                 </ul>
             </nav>
         </div>
@@ -34,12 +34,10 @@
         <main>
             <section id="banner-container" class="section-card">
                 <div class="swiper-container banner-swiper">
-                    <div class="swiper-wrapper">
-                        </div>
+                    <div class="swiper-wrapper"></div>
                     <div class="swiper-pagination"></div>
                 </div>
             </section>
-
             <header class="section-header-alt">
                 <div class="header-content">
                     <div class="logo">
@@ -54,18 +52,15 @@
                     </nav>
                 </div>
             </header>
-
             <section id="app-grid-container" class="section-card">
-                <div id="app-grid" class="app-grid-layout">
-                    </div>
+                <div id="app-grid" class="app-grid-layout"></div>
             </section>
         </main>
     </div>
 
     <div id="page-viewer" class="hidden">
         <button id="back-button"> BACK TO HOME</button>
-        <div id="page-content">
-            </div>
+        <div id="page-content"></div>
     </div>
 
     <div id="app-container" class="hidden">
@@ -73,23 +68,34 @@
         <iframe id="app-frame" src="" frameborder="0"></iframe>
     </div>
     <footer class="site-footer">
-        <p>&copy; 2025 Apps Portal</p>
+        <p>© 2025 Apps Portal</p>
     </footer>
+
+    <div id="game-container" class="hidden">
+        <button id="back-to-portal-button">PORTAL TOP</button>
+        <div id="game-canvas"></div>
+    </div>
+
+    <div id="qr-scanner-container" class="hidden">
+        <div id="qr-reader"></div>
+        <button id="qr-cancel-button">キャンセル</button>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0CAJL4tR7DI5qglKYYP6Mw-0ds6FC6vU&libraries=geometry"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
     <script src="js/main.js"></script>
 
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                    })
-                    .catch(err => {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
+                    .then(registration => { console.log('ServiceWorker registration successful with scope: ', registration.scope); })
+                    .catch(err => { console.log('ServiceWorker registration failed: ', err); });
             });
         }
     </script>
