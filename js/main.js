@@ -1,7 +1,9 @@
-// (Firebase設定とappDatabaseは変更ありません)
+// Firebase設定
 const firebaseConfig = { apiKey: "AIzaSyC0CAJL4tR7DI5qglKYYP6Mw-0ds6FC6vU", authDomain: "chaos-map-data-f2395.firebaseapp.com", projectId: "chaos-map-data-f2395", storageBucket: "chaos-map-data-f2395.appspot.com", messagingSenderId: "372157587318", appId: "1:372157587318:web:ee075f0ae1391af43aa457" };
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const auth = firebase.auth(); // ▼▼▼ 追加 ▼▼▼
+
 const appDatabase = [
     { id: 'asj-hotel', title: '【奥多摩】ASJ×沿線まるごとホテル', icon: 'images/app_icon_ASJ.png', url: 'https://kiyunero.github.io/-2/', showOnBanner: true, bannerImage: 'images/banner_ASJ.png', bannerButtonText: 'MORE', howToPage: 'how-to/asj-hotel.md', videoUrl: 'https://firebasestorage.googleapis.com/v0/b/pilgrimage-quest-app.firebasestorage.app/o/%E5%A5%A5%E5%A4%9A%E6‘©_%E6%A8%AA%E7%94%BB%E9%9D%A2.mp4?alt=media&token=9cf70644-9f17-485e-a29b-03302329fb24' },
     { id: 'mebuku', title: 'めぶく前橋', icon: 'images/app_icon_mebuku.png', url: 'https://kiyunero.github.io/uxitti-zu-point-koukan-system-jihanki-/', showOnBanner: true, bannerImage: 'images/banner_mebuku.png', bannerButtonText: 'MORE', howToPage: 'how-to/mebuku.md', videoUrl: 'https://firebasestorage.googleapis.com/v0/b/pilgrimage-quest-app.firebasestorage.app/o/%E3%82%81%E3%81%B6%E3%81%8F_%E6%A8%AA%E7%94%BB%E9%9D%A2.mp4?alt=media&token=f9195110-13b9-49da-9057-49705af97c5d' },
@@ -11,9 +13,6 @@ const appDatabase = [
     { id: 'manga', title: '漫画風聖地巡礼図鑑', icon: 'images/app_icon_manga.png', url: 'https://kiyunero.github.io/manga_seitijunrei/', showOnBanner: true, bannerImage: 'images/banner_manga.png', bannerButtonText: 'MORE', howToPage: 'how-to/manga.md' },
 ];
 
-// =============================================
-// ゲームキャラクター関連のデータと状態管理
-// =============================================
 const characters = [
     { id: 'char01', name: 'ユイナ', iconUrl: 'images/yuina.gif', selectIconUrl: 'images/select_yuina.png' },
     { id: 'char02', name: 'チョコ', iconUrl: 'images/tyoko.gif', selectIconUrl: 'images/select_tyoko.png' },
@@ -21,28 +20,57 @@ const characters = [
     { id: 'char04', name: 'マイ', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_mai.png' },
     { id: 'char05', name: 'キョウカ', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_kyouka.png' },
     { id: 'char06', name: '係長', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_sarari-man.png' },
-    { id: 'char07', name: '？？？', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_baka.png' }, // IDの重複を修正
-    // 他のキャラクターをここに追加
+    { id: 'char07', name: '？？？', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_baka.png' },
 ];
 
 let playerState = {
     currentCharacterId: 'char01',
-    unlockedCharacters: ['char01'] // 初期キャラクターのみ解放済み
+    unlockedCharacters: ['char01']
 };
 
-function savePlayerState() {
-    localStorage.setItem('playerState', JSON.stringify(playerState));
-}
-
-function loadPlayerState() {
-    const savedState = localStorage.getItem('playerState');
-    if (savedState) {
-        playerState = JSON.parse(savedState);
+// ▼▼▼ 修正 ▼▼▼
+// データの保存先をFirestoreに変更
+async function savePlayerState() {
+    const user = auth.currentUser;
+    if (user) {
+        try {
+            await db.collection('players').doc(user.uid).set(playerState, { merge: true });
+        } catch (error) {
+            console.error("プレイヤーデータの保存に失敗しました: ", error);
+        }
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // (DOM要素の取得などは変更ありません)
+// データの読み込み元をFirestoreに変更
+async function loadPlayerState() {
+    const user = auth.currentUser;
+    if (user) {
+        const docRef = db.collection('players').doc(user.uid);
+        const doc = await docRef.get();
+        if (doc.exists) {
+            playerState = doc.data();
+            console.log("プレイヤーデータをFirestoreから読み込みました。");
+        } else {
+            // Firestoreにデータがない初回ユーザーは、初期データで作成
+            console.log("新規ユーザーです。初期データを作成します。");
+            await savePlayerState();
+        }
+    }
+}
+
+// 匿名認証でサインインする関数
+async function signInAnonymously() {
+    try {
+        await auth.signInAnonymously();
+        console.log("匿名認証に成功しました。UID:", auth.currentUser.uid);
+    } catch (error) {
+        console.error("匿名認証に失敗しました:", error);
+    }
+}
+// ▲▲▲ 修正 ▲▲▲
+
+document.addEventListener('DOMContentLoaded', async () => { // ▼▼▼ asyncを追加 ▼▼▼
+    // DOM要素の取得...（変更なし）
     const bannerWrapper = document.querySelector('.banner-swiper .swiper-wrapper');
     const appGrid = document.getElementById('app-grid');
     const mainContents = document.getElementById('main-contents');
@@ -65,85 +93,70 @@ document.addEventListener('DOMContentLoaded', () => {
     let playerMarker = null;
     let destinationMarkers = [];
     let html5QrCode = null;
+    let watchId = null; 
 
     const characterButton = document.getElementById('character-button');
     const characterSelectModal = document.getElementById('character-select-modal');
     const closeModalButton = document.getElementById('close-modal-button');
     const characterGrid = document.getElementById('character-grid');
 
-    loadPlayerState(); // アプリ起動時にプレイヤーの状態を読み込む
+    // ▼▼▼ 修正 ▼▼▼
+    // アプリ起動時にまず匿名認証でサインインし、その後データを読み込む
+    await signInAnonymously();
+    await loadPlayerState();
+    // ▲▲▲ 修正 ▲▲▲
 
-    // =============================================
-    // ゲーム（Googleマップ）の初期化と制御
-    // =============================================
+    // initGame, destroyGame...（以降の関数は変更なし）
     async function initGame() {
         const { Map } = await google.maps.importLibrary("maps");
-
-        // ▼▼▼ 修正 ▼▼▼
         const mapOptions = {
             center: { lat: 36.3910, lng: 139.0609 },
             zoom: 15,
             disableDefaultUI: true,
-            // Google Cloud Consoleで作成した新しいマップIDをここに貼り付けます
             mapId: '99dd0dbc4f056e1f512df909'
         };
-        // ▲▲▲ 修正 ▲▲▲
-        
-        console.log("新しいマップIDでマップを初期化します:", mapOptions.mapId);
         map = new Map(gameCanvas, mapOptions);
-    
         startGpsTracking();
         fetchDestinationsAndPlaceMarkers();
     }
 
     function destroyGame() {
+        if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+            console.log("GPS追跡を停止しました。");
+        }
         if (playerMarker) {
             playerMarker.map = null; 
             playerMarker = null;
         }
-        destinationMarkers.forEach(marker => {
-            marker.map = null;
-        });
+        destinationMarkers.forEach(marker => { marker.map = null; });
         destinationMarkers = [];
-        
         map = null;
         gameCanvas.innerHTML = "";
     }
 
-    // =============================================
-    // キャラクター選択モーダルの制御
-    // =============================================
     function openCharacterSelectModal() {
-        characterGrid.innerHTML = ''; // グリッドを初期化
-
+        characterGrid.innerHTML = '';
         characters.forEach(char => {
             const isUnlocked = playerState.unlockedCharacters.includes(char.id);
             const isSelected = playerState.currentCharacterId === char.id;
-
             const item = document.createElement('div');
             item.className = 'character-item';
-            if (!isUnlocked) {
-                item.classList.add('locked');
-            }
-            if (isSelected) {
-                item.classList.add('selected');
-            }
+            if (!isUnlocked) item.classList.add('locked');
+            if (isSelected) item.classList.add('selected');
             item.dataset.charId = char.id;
-
             const icon = document.createElement('img');
-            icon.src = char.selectIconUrl; // 選択画面用の画像を使用
+            icon.src = char.selectIconUrl;
             icon.alt = char.name;
             icon.className = 'character-icon';
-
             const name = document.createElement('span');
             name.className = 'character-name';
             name.textContent = isUnlocked ? char.name : '???';
-
             item.appendChild(icon);
             item.appendChild(name);
             characterGrid.appendChild(item);
         });
-
         characterSelectModal.classList.remove('hidden');
     }
 
@@ -153,46 +166,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleCharacterSelect(event) {
         const selectedItem = event.target.closest('.character-item');
-        if (!selectedItem || selectedItem.classList.contains('locked')) {
-            return;
-        }
-
+        if (!selectedItem || selectedItem.classList.contains('locked')) return;
         const charId = selectedItem.dataset.charId;
         playerState.currentCharacterId = charId;
-        savePlayerState();
+        savePlayerState(); // Firestoreに保存
         updatePlayerMarkerIcon();
         closeCharacterSelectModal();
     }
     
-    // =============================================
-    // 目的地マーカーの設置
-    // =============================================
     async function placeDestinationMarkers(locations) {
         const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-        
         locations.forEach(location => {
             const img = document.createElement('img');
             img.src = location.icon;
             img.className = 'destination-marker';
-
             const marker = new AdvancedMarkerElement({
                 position: { lat: location.lat, lng: location.lng },
                 map: map,
                 content: img,
                 title: location.name
             });
-
             marker.customInfo = location;
             marker.isScannable = false; 
             destinationMarkers.push(marker);
         });
     }
 
-    async function fetchDestinationsAndPlaceMarkers() { try { const snapshot = await db.collection('destinations').get(); const locations = []; snapshot.forEach(doc => { const data = doc.data(); data.id = doc.id; locations.push(data); }); await placeDestinationMarkers(locations); } catch (error) { console.error("Error fetching destinations: ", error); alert("目的地のデータの読み込みに失敗しました。"); } }
+    async function fetchDestinationsAndPlaceMarkers() {
+        try {
+            const snapshot = await db.collection('destinations').get();
+            const locations = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            await placeDestinationMarkers(locations);
+        } catch (error) {
+            console.error("Error fetching destinations: ", error);
+            alert("目的地のデータの読み込みに失敗しました。");
+        }
+    }
 
-    // =============================================
-    // GPS追跡機能
-    // =============================================
     async function startGpsTracking() {
         if (!navigator.geolocation) {
             alert("お使いのブラウザは位置情報機能に対応していません。");
@@ -200,19 +210,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+        if (watchId !== null) navigator.geolocation.clearWatch(watchId);
 
-        navigator.geolocation.watchPosition(
+        watchId = navigator.geolocation.watchPosition(
             (position) => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                const currentPos = { lat, lng };
-
+                const currentPos = { lat: position.coords.latitude, lng: position.coords.longitude };
                 if (!playerMarker) {
                     const selectedCharacter = characters.find(c => c.id === playerState.currentCharacterId);
                     const playerImg = document.createElement('img');
-                    playerImg.src = selectedCharacter.iconUrl; // マップ用のアイコンを反映
+                    playerImg.src = selectedCharacter.iconUrl;
                     playerImg.className = 'player-marker';
-
                     playerMarker = new AdvancedMarkerElement({
                         position: currentPos,
                         map: map,
@@ -223,64 +230,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     playerMarker.position = currentPos;
                 }
-
                 checkProximity(currentPos);
             },
             (error) => {
-                let errorMessage = "";
-                switch(error.code) {
-                    case 1: errorMessage = "位置情報の利用が許可されていません。"; break;
-                    case 2: errorMessage = "位置情報を特定できませんでした。"; break;
-                    case 3: errorMessage = "位置情報の取得がタイムアウトしました。"; break;
-                    default: errorMessage = "原因不明のエラーが発生しました。"; break;
-                }
-                alert(errorMessage);
+                const messages = { 1: "位置情報の利用が許可されていません。", 2: "位置情報を特定できませんでした。", 3: "位置情報の取得がタイムアウトしました。" };
+                alert(messages[error.code] || "原因不明のエラーが発生しました。");
             },
-            {
-                enableHighAccuracy: true,
-            }
+            { enableHighAccuracy: true }
         );
     }
 
-    // プレイヤーアイコンを更新する関数
     async function updatePlayerMarkerIcon() {
         if (!playerMarker) return;
         const selectedCharacter = characters.find(c => c.id === playerState.currentCharacterId);
         if (!selectedCharacter) return;
-
         const newImg = playerMarker.content.cloneNode(true);
-        newImg.src = selectedCharacter.iconUrl; // マップ用のアイコンを反映
+        newImg.src = selectedCharacter.iconUrl;
         playerMarker.content = newImg;
     }
     
-    // =============================================
-    // 目的地への近接判定
-    // =============================================
     function checkProximity(currentPos) {
         const arrivalThreshold = 50; 
-
         destinationMarkers.forEach(marker => {
             const destPos = marker.position;
             if (!destPos) return;
-
             google.maps.importLibrary("geometry").then(geometry => {
                 const distance = geometry.spherical.computeDistanceBetween(currentPos, destPos);
                 const markerElement = marker.content;
-    
                 if (!markerElement) return;
-    
                 if (distance <= arrivalThreshold && !marker.isScannable) {
                     markerElement.classList.add('glow-effect');
                     marker.isScannable = true;
-    
-                    markerElement.addEventListener('click', () => {
-                        startQrScanner(marker);
-                    });
-    
+                    markerElement.addEventListener('click', () => startQrScanner(marker));
                 } else if (distance > arrivalThreshold && marker.isScannable) {
                     markerElement.classList.remove('glow-effect');
                     marker.isScannable = false;
-                    
                     const newElement = markerElement.cloneNode(true);
                     if (markerElement.parentNode) {
                         markerElement.parentNode.replaceChild(newElement, markerElement);
@@ -291,27 +275,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // =============================================
-    // QRコードスキャナーの制御
-    // =============================================
     function startQrScanner(targetMarker) {
         qrScannerContainer.classList.remove('hidden');
         html5QrCode = new Html5Qrcode("qr-reader");
-
         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
             stopQrScanner();
-
-            // Firestoreのデータに 'unlockableCharacterId' が設定されているかチェック
             const unlockableCharacterId = targetMarker.customInfo.unlockableCharacterId;
-
             if (unlockableCharacterId && !playerState.unlockedCharacters.includes(unlockableCharacterId)) {
-                // 新しいキャラクターをアンロック
                 playerState.unlockedCharacters.push(unlockableCharacterId);
-                savePlayerState(); // 状態を永続化
-
+                savePlayerState(); // Firestoreに保存
                 const unlockedChar = characters.find(c => c.id === unlockableCharacterId);
                 alert(`QRコードをスキャンしました！\n\n新しいキャラクター「${unlockedChar.name}」が仲間になりました！`);
-
             } else {
                  alert(`「${targetMarker.title}」でQRコードをスキャンしました！\n内容： ${decodedText}`);
             }
@@ -324,9 +298,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    function stopQrScanner() { if (html5QrCode && html5QrCode.isScanning) { html5QrCode.stop().then(ignore => { console.log("QR Code scanning stopped."); }).catch(err => { console.error("Failed to stop QR Code scanning.", err); }); } qrScannerContainer.classList.add('hidden'); }
-    qrCancelButton.addEventListener('click', stopQrScanner);
-
+    function stopQrScanner() {
+        if (html5QrCode && html5QrCode.isScanning) {
+            html5QrCode.stop().catch(err => console.error("QRスキャナーの停止に失敗しました。", err));
+        }
+        qrScannerContainer.classList.add('hidden');
+    }
+    
     // (ポータルサイト関連の関数群は変更ありません)
     const preloadedUrls = new Set();
     function preloadResources(urls) { urls.forEach(url => { if (!url || preloadedUrls.has(url)) return; const link = document.createElement('link'); link.rel = 'prefetch'; link.href = url; if (url.endsWith('.mp4')) { link.as = 'video'; } else { link.as = 'fetch'; } document.head.appendChild(link); preloadedUrls.add(url); }); }
@@ -338,18 +316,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function generateBanners() { const bannerApps = appDatabase.filter(app => app.showOnBanner); bannerApps.forEach(app => { const slide = document.createElement('div'); slide.className = 'swiper-slide'; slide.innerHTML = `<a href="#" data-page="${app.howToPage}"><img src="${app.bannerImage}" alt="${app.title}"><div class="slide-overlay"><span class="slide-title">${app.title}</span><button class="slide-button">${app.bannerButtonText}</button></div></a>`; bannerWrapper.appendChild(slide); }); bannerWrapper.addEventListener('click', (event) => { const link = event.target.closest('a'); if (link && link.dataset.page) { event.preventDefault(); showPage(link.dataset.page); } }); }
     function generateAppGrid() { appDatabase.forEach(app => { const link = document.createElement('a'); link.href = "#"; link.className = 'app-item'; link.addEventListener('click', (event) => { event.preventDefault(); launchApp(app.url); }); const icon = document.createElement('img'); icon.src = app.icon; icon.alt = app.title; icon.className = 'app-icon'; const title = document.createElement('span'); title.className = 'app-title'; title.textContent = app.title; link.appendChild(icon); link.appendChild(title); appGrid.appendChild(link); }); }
     function initializeSwiper() { mySwiper = new Swiper('.banner-swiper', { loop: true, speed: 1500, autoplay: { delay: 2000, disableOnInteraction: false }, centeredSlides: true, slidesPerView: 3, spaceBetween: 20, breakpoints: { 0: { slidesPerView: 1.2, spaceBetween: 10 }, 768: { slidesPerView: 3, spaceBetween: 20 }, }, observer: true, observeParents: true, pagination: { el: '.swiper-pagination', clickable: true }, }); }
-    if (contactButton) { contactButton.addEventListener('click', (event) => { event.preventDefault(); portalHeader.classList.add('hidden'); mainContents.classList.add('hidden'); pageViewer.classList.add('hidden'); appContainer.classList.add('hidden'); portalFooter.classList.add('hidden'); gameContainer.classList.remove('hidden'); if (typeof google !== 'undefined' && google.maps) { initGame(); } else { console.error("Google Maps API is not loaded yet."); alert("マップの読み込みに失敗しました。時間をおいて再度お試しください。"); } }); }
-    if (backToPortalButton) { backToPortalButton.addEventListener('click', () => { gameContainer.classList.add('hidden'); portalHeader.classList.remove('hidden'); mainContents.classList.remove('hidden'); portalFooter.classList.remove('hidden'); destroyGame(); }); }
     
-    // 新機能のイベントリスナー
+    // イベントリスナー
+    qrCancelButton.addEventListener('click', stopQrScanner);
+    if (contactButton) { contactButton.addEventListener('click', (event) => { event.preventDefault(); portalHeader.classList.add('hidden'); mainContents.classList.add('hidden'); pageViewer.classList.add('hidden'); appContainer.classList.add('hidden'); portalFooter.classList.add('hidden'); gameContainer.classList.remove('hidden'); if (typeof google !== 'undefined' && google.maps) { initGame(); } else { alert("マップの読み込みに失敗しました。時間をおいて再度お試しください。"); } }); }
+    if (backToPortalButton) { backToPortalButton.addEventListener('click', () => { gameContainer.classList.add('hidden'); portalHeader.classList.remove('hidden'); mainContents.classList.remove('hidden'); portalFooter.classList.remove('hidden'); destroyGame(); }); }
     characterButton.addEventListener('click', openCharacterSelectModal);
     closeModalButton.addEventListener('click', closeCharacterSelectModal);
     characterGrid.addEventListener('click', handleCharacterSelect);
-
+    closeAppButton.addEventListener('click', closeApp);
+    backButton.addEventListener('click', () => { const video = pageContent.querySelector('video'); if (video) { video.pause(); video.currentTime = 0; } showMainContents(); if (mySwiper) mySwiper.destroy(); initializeSwiper(); });
+    
+    // 初期化処理
     generateBanners();
     generateAppGrid();
     initializeSwiper();
     preloadAllBannerContents();
-    closeAppButton.addEventListener('click', closeApp);
-    backButton.addEventListener('click', () => { const video = pageContent.querySelector('video'); if (video) { video.pause(); video.currentTime = 0; } showMainContents(); if (mySwiper) mySwiper.destroy(); initializeSwiper(); });
 });
