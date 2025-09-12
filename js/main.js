@@ -1,16 +1,87 @@
 // Firebase設定
-const firebaseConfig = { apiKey: "AIzaSyC0CAJL4tR7DI5qglKYYP6Mw-0ds6FC6vU", authDomain: "chaos-map-data-f2395.firebaseapp.com", projectId: "chaos-map-data-f2395", storageBucket: "chaos-map-data-f2395.appspot.com", messagingSenderId: "372157587318", appId: "1:372157587318:web:ee075f0ae1391af43aa457" };
+const firebaseConfig = {
+    apiKey: "AIzaSyC0CAJL4tR7DI5qglKYYP6Mw-0ds6FC6vU",
+    authDomain: "chaos-map-data-f2395.firebaseapp.com",
+    projectId: "chaos-map-data-f2395",
+    storageBucket: "chaos-map-data-f2395.firebasestorage.app",
+    messagingSenderId: "372157587318",
+    appId: "1:372157587318:web:ee075f0ae1391af43aa457"
+  };
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth(); // ▼▼▼ 追加 ▼▼▼
 
 const appDatabase = [
-    { id: 'asj-hotel', title: '【奥多摩】ASJ×沿線まるごとホテル', icon: 'images/app_icon_ASJ.png', url: 'https://kiyunero.github.io/-2/', showOnBanner: true, bannerImage: 'images/banner_ASJ.png', bannerButtonText: 'MORE', howToPage: 'how-to/asj-hotel.md', videoUrl: 'https://firebasestorage.googleapis.com/v0/b/pilgrimage-quest-app.firebasestorage.app/o/%E5%A5%A5%E5%A4%9A%E6‘©_%E6%A8%AA%E7%94%BB%E9%9D%A2.mp4?alt=media&token=9cf70644-9f17-485e-a29b-03302329fb24' },
-    { id: 'mebuku', title: 'めぶく前橋', icon: 'images/app_icon_mebuku.png', url: 'https://kiyunero.github.io/uxitti-zu-point-koukan-system-jihanki-/', showOnBanner: true, bannerImage: 'images/banner_mebuku.png', bannerButtonText: 'MORE', howToPage: 'how-to/mebuku.md', videoUrl: 'https://firebasestorage.googleapis.com/v0/b/pilgrimage-quest-app.firebasestorage.app/o/%E3%82%81%E3%81%B6%E3%81%8F_%E6%A8%AA%E7%94%BB%E9%9D%A2.mp4?alt=media&token=f9195110-13b9-49da-9057-49705af97c5d' },
-    { id: 'maebashi-witches', title: '前橋ウィッチーズ', icon: 'images/app_icon_witch.png', url: 'https://kiyunero.github.io/uxitti-zu_61/', showOnBanner: true, bannerImage: 'images/banner_witch.png', bannerButtonText: 'MORE', howToPage: 'how-to/maebashi-witches.md', videoUrl: 'https://firebasestorage.googleapis.com/v0/b/pilgrimage-quest-app.firebasestorage.app/o/%E3%82%A6%E3%82%A3%E3%83%83%E3%83%81%E3%83%BC%E3%82%BAOP_%E6%A8%AA%E7%94%BB%E9%9D%A2.mp4?alt=media&token=16e1ca27-1760-4265-bb77-0fdaf2e8402e' },
-    { id: 'zasupa', title: 'ザスパ草津選手名鑑', icon: 'images/app_icon_zasupa.png', url: 'https://kiyunero.github.io/zasupa_sensyuzukan/', showOnBanner: true, bannerImage: 'images/banner_zasupa.png', bannerButtonText: 'MORE', howToPage: 'how-to/zasupa.md' },
-    { id: 'monster-hunter', title: 'Monster Hunter Wilds', icon: 'images/app_icon_monhan.png', url: 'https://www.monsterhunter.com/wilds/ja-jp/', showOnBanner: true, bannerImage: 'images/banner_monhan.png', bannerButtonText: 'MORE', howToPage: 'how-to/monster-hunter.md' },
-    { id: 'manga', title: '漫画風聖地巡礼図鑑', icon: 'images/app_icon_manga.png', url: 'https://kiyunero.github.io/manga_seitijunrei/', showOnBanner: true, bannerImage: 'images/banner_manga.png', bannerButtonText: 'MORE', howToPage: 'how-to/manga.md' },
+    {
+        id: 'asj-hotel', // アプリを内部的に識別するための一意のID、英数字とハイフン(-)で命名すれば何でも良い(今は私用されていない、今後お気に入りなどを実装した時に必要)
+        title: '【奥多摩】ASJ×沿線まるごとホテル',
+        icon: 'images/app_icon_ASJ.png', // アプリ一覧に表示されるアイコン画像のパス
+        url: 'https://kiyunero.github.io/-2/', // ここを実際のアプリのURLに書き換える
+        showOnBanner: true, // このアプリを画面上部のスライドバナーに表示するかどうかを決める
+        bannerImage: 'images/banner_ASJ.png',
+        bannerButtonText: 'MORE',
+        howToPage: 'how-to/asj-hotel.md',
+    },
+    {
+        id: 'mebuku',
+        title: 'めぶく前橋',
+        icon: 'images/app_icon_mebuku.png',
+        url: 'https://kiyunero.github.io/uxitti-zu-point-koukan-system-jihanki-/',
+        showOnBanner: true,
+        bannerImage: 'images/banner_mebuku.png',
+        bannerButtonText: 'MORE',
+        howToPage: 'how-to/mebuku.md',
+    },
+    {
+        id: 'mebuku-sumaho',
+        title: 'めぶく前橋(スマホ)',
+        icon: 'images/app_icon_mebuku.png',
+        url: 'https://kiyunero.github.io/uxitti-zu-point-koukan-system-sumaho/',
+        showOnBanner: false,
+        bannerImage: 'images/banner_mebuku.png',
+        bannerButtonText: 'MORE',
+        howToPage: 'how-to/mebuku-sumaho.md',
+    },
+    {
+        id: 'maebasi-wiches',
+        title: '前橋ウィッチーズ',
+        icon: 'images/app_icon_witch.png',
+        url: 'https://kiyunero.github.io/uxitti-zu_61/',
+        showOnBanner: true,
+        bannerImage: 'images/banner_witch.png',
+        bannerButtonText: 'MORE',
+        howToPage: 'how-to/maebashi-witches.md',
+    },
+    {
+        id: 'zasupa',
+        title: 'ザスパ草津選手名鑑',
+        icon: 'images/app_icon_zasupa.png',
+        url: 'https://kiyunero.github.io/zasupa_sensyuzukan/',
+        showOnBanner: true,
+        bannerImage: 'images/banner_zasupa.png',
+        bannerButtonText: 'MORE',
+        howToPage: 'how-to/zasupa.md',
+    },
+    {
+        id: 'monster-hunter',
+        title: 'Monster Hunter Wilds',
+        icon: 'images/app_icon_monhan.png',
+        url: 'https://www.monsterhunter.com/wilds/ja-jp/',
+        showOnBanner: true,
+        bannerImage: 'images/banner_monhan.png',
+        bannerButtonText: 'MORE',
+        howToPage: 'how-to/monster-hunter.md',
+    },
+    {
+        id: 'manga',
+        title: 'Seichi GO!',
+        icon: 'images/app_icon_manga.png',
+        url: 'https://kiyunero.github.io/manga_seitijunrei/',
+        showOnBanner: true,
+        bannerImage: 'images/banner_manga.png',
+        bannerButtonText: 'MORE',
+        howToPage: 'how-to/manga.md',
+    },
 ];
 
 const characters = [
