@@ -498,9 +498,9 @@ main {
     top: 20px;
     left: 20px;
     padding: 10px 15px;
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    background-color: rgba(0, 0, 0, 0.26);
+    color: rgb(52, 255, 86);
+    border: 1px solid rgba(0, 0, 0, 0.188);
     border-radius: 5px;
     cursor: pointer;
     z-index: 2001;
@@ -589,9 +589,9 @@ main {
     top: 20px;
     right: 20px;
     padding: 10px 15px;
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    background-color: rgba(0, 0, 0, 0.26);
+    color: rgb(52, 255, 86);
+    border: 1px solid rgba(0, 0, 0, 0.188);
     border-radius: 5px;
     cursor: pointer;
     z-index: 2001;
@@ -625,6 +625,10 @@ main {
     text-align: center;
     width: 90%;
     max-width: 600px;
+    /* ▼▼▼ 追加 ▼▼▼ */
+    max-height: 90vh; /* 高さが画面を超えないように */
+    overflow-y: auto;   /* 内容が多い場合にスクロールできるように */
+    /* ▲▲▲ 追加 ▲▲▲ */
 }
 
 .modal-content h2 {
@@ -632,12 +636,40 @@ main {
     color: #f0f0f0;
 }
 
+/* ▼▼▼ 修正 ▼▼▼ */
+/* #character-grid のスタイルを変更 */
 #character-grid {
+    /* display: grid; を削除 */
+    margin: 2rem 0;
+}
+
+/* 新しく追加するグループのスタイル */
+.character-group {
+    margin-bottom: 2.5rem; /* グループ間の余白を広めに */
+}
+
+.character-group:last-child {
+    margin-bottom: 0; /* 最後のグループの下余白は不要 */
+}
+
+.character-group-title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #a0a0a0;
+    text-transform: uppercase; /* 大文字に */
+    text-align: left; /* 左揃えに */
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #444; /* 線を細く */
+    letter-spacing: 1px; /* 文字間隔 */
+}
+
+.character-group-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 1.5rem;
-    margin: 2rem 0;
 }
+/* ▲▲▲ 修正 ▲▲▲ */
 
 .character-item {
     cursor: pointer;
@@ -653,15 +685,12 @@ main {
 }
 
 .character-icon {
-    width: 80px;  /* 少しサイズ調整 */
-    height: 80px; /* 少しサイズ調整 */
+    width: 80px;
+    height: 80px;
     background-color: #333;
     border-radius: 8px;
     border: 2px solid #555;
-    /* ▼▼▼ 修正 ▼▼▼ */
-    object-fit: cover; /* containからcoverに変更 */
-    /* padding: 5px; を削除 */
-    /* ▲▲▲ 修正 ▲▲▲ */
+    object-fit: cover;
 }
 
 .character-name {
@@ -696,6 +725,7 @@ main {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
+    margin-top: 1rem; /* ボタンの上の余白を少し追加 */
 }
 
 #close-modal-button:hover {

@@ -24,8 +24,8 @@ const appDatabase = [
     },
     {
         id: 'mebuku',
-        title: 'めぶく前橋',
-        icon: 'images/app_icon_mebuku.png',
+        title: 'サンデンRS',
+        icon: 'https://www.sanden-rs.com/company/sprati0000002xb3-img/kaishagaiyou.jpg',
         url: 'https://kiyunero.github.io/uxitti-zu-point-koukan-system-jihanki-/',
         showOnBanner: true,
         bannerImage: 'images/banner_mebuku.png',
@@ -84,19 +84,37 @@ const appDatabase = [
     },
 ];
 
-const characters = [
-    { id: 'char01', name: 'ユイナ', iconUrl: 'images/yuina.gif', selectIconUrl: 'images/select_yuina.png' },
-    { id: 'char02', name: 'チョコ', iconUrl: 'images/tyoko.gif', selectIconUrl: 'images/select_tyoko.png' },
-    { id: 'char03', name: 'アズ', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_azu.png' },
-    { id: 'char04', name: 'マイ', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_mai.png' },
-    { id: 'char05', name: 'キョウカ', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_kyouka.png' },
-    { id: 'char06', name: '係長', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_sarari-man.png' },
-    { id: 'char07', name: '？？？', iconUrl: 'images/char_mage.png', selectIconUrl: 'images/select_baka.png' },
+// ▼▼▼ 修正 ▼▼▼
+// キャラクターデータをグループ化
+const characterGroups = [
+    {
+        groupName: '前橋ウィッチーズ',
+        characters: [
+            { id: 'char02', name: 'ユイナ', iconUrl: 'images/yuina.gif', selectIconUrl: 'images/select_yuina.png' },
+            { id: 'char03', name: 'チョコ', iconUrl: 'images/tyoko.gif', selectIconUrl: 'images/select_tyoko.png' },
+            { id: 'char04', name: 'アズ', iconUrl: 'images/azu.gif', selectIconUrl: 'images/select_azu.png' },
+            { id: 'char05', name: 'マイ', iconUrl: 'images/mai.gif', selectIconUrl: 'images/select_mai.png' },
+            { id: 'char06', name: 'キョウカ', iconUrl: 'images/kyouka.gif', selectIconUrl: 'images/select_kyouka.png' },
+        ]
+    },
+    {
+        groupName: 'その他',
+        characters: [
+            { id: 'char01', name: '自販機ロボ', iconUrl: 'images/jihanki.gif', selectIconUrl: 'images/select_jihanki.png' },
+            { id: 'char07', name: '係長', iconUrl: 'images/sarari-manneo.gif', selectIconUrl: 'images/select_sarari-man.png' },
+            { id: 'char08', name: '間抜作', iconUrl: 'images/nukesaku.gif', selectIconUrl: 'images/select_baka.png' },
+        ]
+    }
 ];
+
+// 他の関数でキャラクターをIDで検索しやすくするため、フラットな配列も生成しておく
+const characters = characterGroups.flatMap(group => group.characters);
+// ▲▲▲ 修正 ▲▲▲
+
 
 let playerState = {
     currentCharacterId: 'char01',
-    unlockedCharacters: ['char01']
+    unlockedCharacters: ['char01','char02','char03','char04','char05','char06']
 };
 
 // ▼▼▼ 修正 ▼▼▼
@@ -207,29 +225,56 @@ document.addEventListener('DOMContentLoaded', async () => { // ▼▼▼ async�
         gameCanvas.innerHTML = "";
     }
 
+    // ▼▼▼ 修正 ▼▼▼
     function openCharacterSelectModal() {
-        characterGrid.innerHTML = '';
-        characters.forEach(char => {
-            const isUnlocked = playerState.unlockedCharacters.includes(char.id);
-            const isSelected = playerState.currentCharacterId === char.id;
-            const item = document.createElement('div');
-            item.className = 'character-item';
-            if (!isUnlocked) item.classList.add('locked');
-            if (isSelected) item.classList.add('selected');
-            item.dataset.charId = char.id;
-            const icon = document.createElement('img');
-            icon.src = char.selectIconUrl;
-            icon.alt = char.name;
-            icon.className = 'character-icon';
-            const name = document.createElement('span');
-            name.className = 'character-name';
-            name.textContent = isUnlocked ? char.name : '???';
-            item.appendChild(icon);
-            item.appendChild(name);
-            characterGrid.appendChild(item);
+        characterGrid.innerHTML = ''; // 中身をクリア
+
+        characterGroups.forEach(group => {
+            // グループ全体のコンテナを作成
+            const groupContainer = document.createElement('div');
+            groupContainer.className = 'character-group';
+
+            // グループタイトルを作成
+            const groupTitle = document.createElement('h3');
+            groupTitle.className = 'character-group-title';
+            groupTitle.textContent = group.groupName;
+            groupContainer.appendChild(groupTitle);
+
+            // グループ内のキャラクターグリッドを作成
+            const groupGrid = document.createElement('div');
+            groupGrid.className = 'character-group-grid';
+
+            group.characters.forEach(char => {
+                const isUnlocked = playerState.unlockedCharacters.includes(char.id);
+                const isSelected = playerState.currentCharacterId === char.id;
+
+                const item = document.createElement('div');
+                item.className = 'character-item';
+                if (!isUnlocked) item.classList.add('locked');
+                if (isSelected) item.classList.add('selected');
+                item.dataset.charId = char.id;
+
+                const icon = document.createElement('img');
+                icon.src = char.selectIconUrl;
+                icon.alt = char.name;
+                icon.className = 'character-icon';
+
+                const name = document.createElement('span');
+                name.className = 'character-name';
+                name.textContent = isUnlocked ? char.name : '???';
+
+                item.appendChild(icon);
+                item.appendChild(name);
+                groupGrid.appendChild(item);
+            });
+
+            groupContainer.appendChild(groupGrid);
+            characterGrid.appendChild(groupContainer);
         });
+
         characterSelectModal.classList.remove('hidden');
     }
+    // ▲▲▲ 修正 ▲▲▲
 
     function closeCharacterSelectModal() {
         characterSelectModal.classList.add('hidden');
