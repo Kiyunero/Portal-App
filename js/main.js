@@ -103,6 +103,7 @@ const characterGroups = [
             { id: 'char01', name: '自販機ロボ', iconUrl: 'images/jihanki.gif', selectIconUrl: 'images/select_jihanki.png' },
             { id: 'char07', name: '係長', iconUrl: 'images/sarari-manneo.gif', selectIconUrl: 'images/select_sarari-man.png' },
             { id: 'char08', name: '間抜作', iconUrl: 'images/nukesaku.gif', selectIconUrl: 'images/select_baka.png' },
+            { id: 'char09', name: 'オスカル', iconUrl: 'images/osukaru.gif', selectIconUrl: 'images/select_osukaru.png' },
         ]
     }
 ];
