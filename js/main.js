@@ -82,6 +82,16 @@ const appDatabase = [
         bannerButtonText: 'MORE',
         howToPage: 'how-to/manga.md',
     },
+    {
+        id: 'sanden-jikkenntou',
+        title: 'サンデン実験室探検',
+        icon: 'https://www.sanden-rs.com/company/sprati0000000mq7-img/AP_kyoten_240.png',
+        url: 'https://kiyunero.github.io/sandenRS-MAP-sumaho/',
+        showOnBanner: false,
+        bannerImage: 'images/banner_ASJ.png',
+        bannerButtonText: 'MORE',
+        howToPage: 'how-to/asj-hotel.md',
+    },
 ];
 
 const characterGroups = [
