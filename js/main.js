@@ -9,15 +9,15 @@ const firebaseConfig = {
   };
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const auth = firebase.auth(); // ▼▼▼ 追加 ▼▼▼
+const auth = firebase.auth();
 
 const appDatabase = [
     {
-        id: 'asj-hotel', // アプリを内部的に識別するための一意のID、英数字とハイフン(-)で命名すれば何でも良い(今は私用されていない、今後お気に入りなどを実装した時に必要)
+        id: 'asj-hotel',
         title: '【奥多摩】ASJ×沿線まるごとホテル',
-        icon: 'images/app_icon_ASJ.png', // アプリ一覧に表示されるアイコン画像のパス
-        url: 'https://kiyunero.github.io/-2/', // ここを実際のアプリのURLに書き換える
-        showOnBanner: true, // このアプリを画面上部のスライドバナーに表示するかどうかを決める
+        icon: 'images/app_icon_ASJ.png',
+        url: 'https://kiyunero.github.io/-2/',
+        showOnBanner: true,
         bannerImage: 'images/banner_ASJ.png',
         bannerButtonText: 'MORE',
         howToPage: 'how-to/asj-hotel.md',
@@ -84,8 +84,6 @@ const appDatabase = [
     },
 ];
 
-// ▼▼▼ 修正 ▼▼▼
-// キャラクターデータをグループ化
 const characterGroups = [
     {
         groupName: '前橋ウィッチーズ',
@@ -108,18 +106,18 @@ const characterGroups = [
     }
 ];
 
-// 他の関数でキャラクターをIDで検索しやすくするため、フラットな配列も生成しておく
 const characters = characterGroups.flatMap(group => group.characters);
-// ▲▲▲ 修正 ▲▲▲
-
 
 let playerState = {
     currentCharacterId: 'char01',
     unlockedCharacters: ['char01','char02','char03','char04','char05','char06']
 };
 
-// ▼▼▼ 修正 ▼▼▼
-// データの保存先をFirestoreに変更
+// ▼▼▼ ここから追加 ▼▼▼
+// Firebaseから取得したキャラクターと合言葉のペアを保存する配列
+let characterPasswords = [];
+// ▲▲▲ ここまで追加 ▲▲▲
+
 async function savePlayerState() {
     const user = auth.currentUser;
     if (user) {
@@ -131,7 +129,6 @@ async function savePlayerState() {
     }
 }
 
-// データの読み込み元をFirestoreに変更
 async function loadPlayerState() {
     const user = auth.currentUser;
     if (user) {
@@ -141,14 +138,34 @@ async function loadPlayerState() {
             playerState = doc.data();
             console.log("プレイヤーデータをFirestoreから読み込みました。");
         } else {
-            // Firestoreにデータがない初回ユーザーは、初期データで作成
             console.log("新規ユーザーです。初期データを作成します。");
             await savePlayerState();
         }
     }
 }
 
-// 匿名認証でサインインする関数
+// ▼▼▼ ここから追加 ▼▼▼
+/**
+ * Firebaseの`characters`コレクションから合言葉データを取得する関数
+ * @returns {Promise<void>}
+ */
+async function fetchCharacterPasswords() {
+    try {
+        const snapshot = await db.collection('characters').get();
+        // ドキュメントIDをキャラクターIDとして、データを格納
+        characterPasswords = snapshot.docs.map(doc => ({
+            id: doc.id,
+            password: doc.data().password
+        }));
+        console.log("キャラクターの合言葉データを読み込みました。", characterPasswords);
+    } catch (error) {
+        console.error("キャラクターの合言葉データの読み込みに失敗しました: ", error);
+        alert("キャラクターの合言葉データの読み込みに失敗しました。");
+    }
+}
+// ▲▲▲ ここまで追加 ▲▲▲
+
+
 async function signInAnonymously() {
     try {
         await auth.signInAnonymously();
@@ -157,10 +174,9 @@ async function signInAnonymously() {
         console.error("匿名認証に失敗しました:", error);
     }
 }
-// ▲▲▲ 修正 ▲▲▲
 
-document.addEventListener('DOMContentLoaded', async () => { // ▼▼▼ asyncを追加 ▼▼▼
-    // DOM要素の取得...（変更なし）
+document.addEventListener('DOMContentLoaded', async () => {
+    // DOM要素の取得
     const bannerWrapper = document.querySelector('.banner-swiper .swiper-wrapper');
     const appGrid = document.getElementById('app-grid');
     const mainContents = document.getElementById('main-contents');
@@ -176,27 +192,31 @@ document.addEventListener('DOMContentLoaded', async () => { // ▼▼▼ async�
     const portalHeader = document.querySelector('.site-header');
     const portalFooter = document.querySelector('.site-footer');
     const gameCanvas = document.getElementById('game-canvas');
-    const qrScannerContainer = document.getElementById('qr-scanner-container');
-    const qrCancelButton = document.getElementById('qr-cancel-button');
+    const passwordModal = document.getElementById('password-modal');
+    const passwordInput = document.getElementById('password-input');
+    const passwordSubmitButton = document.getElementById('password-submit-button');
+    const passwordCancelButton = document.getElementById('password-cancel-button');
     let mySwiper;
     let map;
     let playerMarker = null;
     let destinationMarkers = [];
-    let html5QrCode = null;
-    let watchId = null; 
+    let watchId = null;
 
     const characterButton = document.getElementById('character-button');
     const characterSelectModal = document.getElementById('character-select-modal');
     const closeModalButton = document.getElementById('close-modal-button');
     const characterGrid = document.getElementById('character-grid');
 
-    // ▼▼▼ 修正 ▼▼▼
-    // アプリ起動時にまず匿名認証でサインインし、その後データを読み込む
+    // ▼▼▼ ここから追加 ▼▼▼
+    const unlockButton = document.getElementById('unlock-button');
+    // ▲▲▲ ここまで追加 ▲▲▲
+
     await signInAnonymously();
     await loadPlayerState();
-    // ▲▲▲ 修正 ▲▲▲
+    // ▼▼▼ ここから追加 ▼▼▼
+    await fetchCharacterPasswords(); // 合言葉リストを取得
+    // ▲▲▲ ここまで追加 ▲▲▲
 
-    // initGame, destroyGame...（以降の関数は変更なし）
     async function initGame() {
         const { Map } = await google.maps.importLibrary("maps");
         const mapOptions = {
@@ -226,56 +246,41 @@ document.addEventListener('DOMContentLoaded', async () => { // ▼▼▼ async�
         gameCanvas.innerHTML = "";
     }
 
-    // ▼▼▼ 修正 ▼▼▼
     function openCharacterSelectModal() {
-        characterGrid.innerHTML = ''; // 中身をクリア
-
+        characterGrid.innerHTML = '';
         characterGroups.forEach(group => {
-            // グループ全体のコンテナを作成
             const groupContainer = document.createElement('div');
             groupContainer.className = 'character-group';
-
-            // グループタイトルを作成
             const groupTitle = document.createElement('h3');
             groupTitle.className = 'character-group-title';
             groupTitle.textContent = group.groupName;
             groupContainer.appendChild(groupTitle);
-
-            // グループ内のキャラクターグリッドを作成
             const groupGrid = document.createElement('div');
             groupGrid.className = 'character-group-grid';
-
             group.characters.forEach(char => {
                 const isUnlocked = playerState.unlockedCharacters.includes(char.id);
                 const isSelected = playerState.currentCharacterId === char.id;
-
                 const item = document.createElement('div');
                 item.className = 'character-item';
                 if (!isUnlocked) item.classList.add('locked');
                 if (isSelected) item.classList.add('selected');
                 item.dataset.charId = char.id;
-
                 const icon = document.createElement('img');
                 icon.src = char.selectIconUrl;
                 icon.alt = char.name;
                 icon.className = 'character-icon';
-
                 const name = document.createElement('span');
                 name.className = 'character-name';
                 name.textContent = isUnlocked ? char.name : '???';
-
                 item.appendChild(icon);
                 item.appendChild(name);
                 groupGrid.appendChild(item);
             });
-
             groupContainer.appendChild(groupGrid);
             characterGrid.appendChild(groupContainer);
         });
-
         characterSelectModal.classList.remove('hidden');
     }
-    // ▲▲▲ 修正 ▲▲▲
 
     function closeCharacterSelectModal() {
         characterSelectModal.classList.add('hidden');
@@ -286,7 +291,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ▼▼▼ async�
         if (!selectedItem || selectedItem.classList.contains('locked')) return;
         const charId = selectedItem.dataset.charId;
         playerState.currentCharacterId = charId;
-        savePlayerState(); // Firestoreに保存
+        savePlayerState();
         updatePlayerMarkerIcon();
         closeCharacterSelectModal();
     }
@@ -303,8 +308,6 @@ document.addEventListener('DOMContentLoaded', async () => { // ▼▼▼ async�
                 content: img,
                 title: location.name
             });
-            marker.customInfo = location;
-            marker.isScannable = false; 
             destinationMarkers.push(marker);
         });
     }
@@ -325,10 +328,8 @@ document.addEventListener('DOMContentLoaded', async () => { // ▼▼▼ async�
             alert("お使いのブラウザは位置情報機能に対応していません。");
             return;
         }
-        
         const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
         if (watchId !== null) navigator.geolocation.clearWatch(watchId);
-
         watchId = navigator.geolocation.watchPosition(
             (position) => {
                 const currentPos = { lat: position.coords.latitude, lng: position.coords.longitude };
@@ -366,7 +367,11 @@ document.addEventListener('DOMContentLoaded', async () => { // ▼▼▼ async�
         playerMarker.content = newImg;
     }
     
+    // ▼▼▼ ここから変更 ▼▼▼
+    // 距離に応じた処理は不要になったため、関数の中身を空にするか、マーカーを光らせるだけの視覚効果に留める
+    // ここでは、念のため関数自体は残しておく
     function checkProximity(currentPos) {
+        // この関数はキャラクター開放ロジックとは無関係になった
         const arrivalThreshold = 50; 
         destinationMarkers.forEach(marker => {
             const destPos = marker.position;
@@ -375,52 +380,68 @@ document.addEventListener('DOMContentLoaded', async () => { // ▼▼▼ async�
                 const distance = geometry.spherical.computeDistanceBetween(currentPos, destPos);
                 const markerElement = marker.content;
                 if (!markerElement) return;
-                if (distance <= arrivalThreshold && !marker.isScannable) {
+
+                // 視覚効果としてマーカーを光らせる場合は以下のコードを残す
+                if (distance <= arrivalThreshold) {
                     markerElement.classList.add('glow-effect');
-                    marker.isScannable = true;
-                    markerElement.addEventListener('click', () => startQrScanner(marker));
-                } else if (distance > arrivalThreshold && marker.isScannable) {
+                } else {
                     markerElement.classList.remove('glow-effect');
-                    marker.isScannable = false;
-                    const newElement = markerElement.cloneNode(true);
-                    if (markerElement.parentNode) {
-                        markerElement.parentNode.replaceChild(newElement, markerElement);
-                    }
-                    marker.content = newElement;
                 }
             });
         });
     }
+    // ▲▲▲ ここまで変更 ▲▲▲
 
-    function startQrScanner(targetMarker) {
-        qrScannerContainer.classList.remove('hidden');
-        html5QrCode = new Html5Qrcode("qr-reader");
-        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-            stopQrScanner();
-            const unlockableCharacterId = targetMarker.customInfo.unlockableCharacterId;
-            if (unlockableCharacterId && !playerState.unlockedCharacters.includes(unlockableCharacterId)) {
-                playerState.unlockedCharacters.push(unlockableCharacterId);
-                savePlayerState(); // Firestoreに保存
-                const unlockedChar = characters.find(c => c.id === unlockableCharacterId);
-                alert(`QRコードをスキャンしました！\n\n新しいキャラクター「${unlockedChar.name}」が仲間になりました！`);
-            } else {
-                 alert(`「${targetMarker.title}」でQRコードをスキャンしました！\n内容： ${decodedText}`);
-            }
-        };
-        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
-            .catch(err => {
-                alert("カメラの起動に失敗しました。カメラの使用を許可してください。");
-                stopQrScanner();
-            });
+    // ▼▼▼ ここから変更 ▼▼▼
+    // パスワードモーダルのロジックを修正
+    
+    function openPasswordModal() {
+        passwordInput.value = "";
+        passwordModal.classList.remove('hidden');
+        passwordInput.focus();
+    }
+    
+    function closePasswordModal() {
+        passwordModal.classList.add('hidden');
     }
 
-    function stopQrScanner() {
-        if (html5QrCode && html5QrCode.isScanning) {
-            html5QrCode.stop().catch(err => console.error("QRスキャナーの停止に失敗しました。", err));
+    /**
+     * 入力された合言葉を検証し、キャラクターをアンロックする関数
+     */
+    function handlePasswordSubmit() {
+        const enteredPassword = passwordInput.value;
+        if (enteredPassword.length !== 6) {
+            alert("合言葉は６桁で入力してください。");
+            return;
         }
-        qrScannerContainer.classList.add('hidden');
+
+        // 入力された合言葉に一致するキャラクターを探す
+        const targetCharacter = characterPasswords.find(char => char.password === enteredPassword);
+
+        if (targetCharacter) {
+            // 合言葉が一致した場合
+            const characterId = targetCharacter.id;
+            
+            if (playerState.unlockedCharacters.includes(characterId)) {
+                // すでに開放済みの場合
+                alert("このキャラクターはすでに仲間になっています！");
+            } else {
+                // 新しく開放する場合
+                playerState.unlockedCharacters.push(characterId);
+                savePlayerState(); // Firestoreに保存
+                const unlockedCharInfo = characters.find(c => c.id === characterId);
+                const characterName = unlockedCharInfo ? unlockedCharInfo.name : "新しい仲間";
+                alert(`正解！\n\n「${characterName}」が仲間になりました！`);
+            }
+            closePasswordModal();
+        } else {
+            // 合言葉が一致しなかった場合
+            alert("合言葉が違います。");
+            passwordInput.value = "";
+            passwordInput.focus();
+        }
     }
+    // ▲▲▲ ここまで変更 ▲▲▲
     
     // (ポータルサイト関連の関数群は変更ありません)
     const preloadedUrls = new Set();
@@ -435,7 +456,11 @@ document.addEventListener('DOMContentLoaded', async () => { // ▼▼▼ async�
     function initializeSwiper() { mySwiper = new Swiper('.banner-swiper', { loop: true, speed: 1500, autoplay: { delay: 2000, disableOnInteraction: false }, centeredSlides: true, slidesPerView: 3, spaceBetween: 20, breakpoints: { 0: { slidesPerView: 1.2, spaceBetween: 10 }, 768: { slidesPerView: 3, spaceBetween: 20 }, }, observer: true, observeParents: true, pagination: { el: '.swiper-pagination', clickable: true }, }); }
     
     // イベントリスナー
-    qrCancelButton.addEventListener('click', stopQrScanner);
+    passwordSubmitButton.addEventListener('click', handlePasswordSubmit);
+    passwordCancelButton.addEventListener('click', closePasswordModal);
+    // ▼▼▼ ここから追加 ▼▼▼
+    unlockButton.addEventListener('click', openPasswordModal);
+    // ▲▲▲ ここまで追加 ▲▲▲
     if (contactButton) { contactButton.addEventListener('click', (event) => { event.preventDefault(); portalHeader.classList.add('hidden'); mainContents.classList.add('hidden'); pageViewer.classList.add('hidden'); appContainer.classList.add('hidden'); portalFooter.classList.add('hidden'); gameContainer.classList.remove('hidden'); if (typeof google !== 'undefined' && google.maps) { initGame(); } else { alert("マップの読み込みに失敗しました。時間をおいて再度お試しください。"); } }); }
     if (backToPortalButton) { backToPortalButton.addEventListener('click', () => { gameContainer.classList.add('hidden'); portalHeader.classList.remove('hidden'); mainContents.classList.remove('hidden'); portalFooter.classList.remove('hidden'); destroyGame(); }); }
     characterButton.addEventListener('click', openCharacterSelectModal);

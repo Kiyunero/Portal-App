@@ -75,6 +75,7 @@
         <button id="back-to-portal-button">PORTAL TOP</button>
         <div id="game-canvas"></div>
         
+        <button id="unlock-button">開放</button>
         <button id="character-button">CHARACTER</button>
 
         <div id="character-select-modal" class="hidden">
@@ -87,9 +88,16 @@
         </div>
     </div>
 
-    <div id="qr-scanner-container" class="hidden">
-        <div id="qr-reader"></div>
-        <button id="qr-cancel-button">キャンセル</button>
+    <div id="password-modal" class="hidden">
+        <div class="modal-content">
+            <h2>６桁の合言葉を入力</h2>
+            <p>合言葉を入力してキャラクターを開放します。</p>
+            <input type="number" id="password-input" maxlength="6" pattern="\d{6}" placeholder="123456">
+            <div class="password-modal-buttons">
+                <button id="password-submit-button">決定</button>
+                <button id="password-cancel-button">キャンセル</button>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
